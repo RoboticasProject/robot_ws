@@ -1,0 +1,241 @@
+[0.306s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.306s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=6, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0xffffa97f4eb0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffffa97f4970>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffffa97f4970>>)
+[0.780s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.780s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.780s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.780s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.781s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.781s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.781s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/afro-robotics/robot_ws'
+[0.781s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.782s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.783s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.784s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.784s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.784s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.784s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.784s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.784s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.819s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.819s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.819s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.821s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extensions ['ignore', 'ignore_ament_install']
+[0.821s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'ignore'
+[0.821s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'ignore_ament_install'
+[0.821s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extensions ['colcon_pkg']
+[0.821s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'colcon_pkg'
+[0.821s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extensions ['colcon_meta']
+[0.821s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'colcon_meta'
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extensions ['ros']
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'ros'
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extensions ['cmake', 'python']
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'cmake'
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'python'
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extensions ['python_setup_py']
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(models) by extension 'python_setup_py'
+[0.822s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.823s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.824s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.824s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.824s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.824s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extensions ['ignore', 'ignore_ament_install']
+[0.824s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extension 'ignore'
+[0.824s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extension 'ignore_ament_install'
+[0.824s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extensions ['colcon_pkg']
+[0.825s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extension 'colcon_pkg'
+[0.825s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extensions ['colcon_meta']
+[0.825s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extension 'colcon_meta'
+[0.825s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extensions ['ros']
+[0.825s] Level 1:colcon.colcon_core.package_identification:_identify(src/image_acquisition) by extension 'ros'
+[0.832s] DEBUG:colcon.colcon_core.package_identification:Package 'src/image_acquisition' with type 'ros.ament_python' and name 'image_acquisition'
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extensions ['ignore', 'ignore_ament_install']
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extension 'ignore'
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extension 'ignore_ament_install'
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extensions ['colcon_pkg']
+[0.834s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extension 'colcon_pkg'
+[0.834s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extensions ['colcon_meta']
+[0.834s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extension 'colcon_meta'
+[0.834s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extensions ['ros']
+[0.834s] Level 1:colcon.colcon_core.package_identification:_identify(src/navigation) by extension 'ros'
+[0.835s] DEBUG:colcon.colcon_core.package_identification:Package 'src/navigation' with type 'ros.ament_python' and name 'navigation'
+[0.835s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extensions ['ignore', 'ignore_ament_install']
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extension 'ignore'
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extension 'ignore_ament_install'
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extensions ['colcon_pkg']
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extension 'colcon_pkg'
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extensions ['colcon_meta']
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extension 'colcon_meta'
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extensions ['ros']
+[0.836s] Level 1:colcon.colcon_core.package_identification:_identify(src/orchestration) by extension 'ros'
+[0.838s] DEBUG:colcon.colcon_core.package_identification:Package 'src/orchestration' with type 'ros.ament_python' and name 'orchestration'
+[0.838s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.838s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.838s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.838s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.838s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.950s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.951s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.956s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 3 installed packages in /home/afro-robotics/robot_ws/install
+[0.959s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 280 installed packages in /opt/ros/humble
+[0.963s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'cmake_args' from command line to 'None'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'cmake_target' from command line to 'None'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'cmake_clean_cache' from command line to 'False'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'cmake_clean_first' from command line to 'False'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'cmake_force_configure' from command line to 'False'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'ament_cmake_args' from command line to 'None'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'catkin_cmake_args' from command line to 'None'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'image_acquisition' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.069s] DEBUG:colcon.colcon_core.verb:Building package 'image_acquisition' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/afro-robotics/robot_ws/build/image_acquisition', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/afro-robotics/robot_ws/install/image_acquisition', 'merge_install': False, 'path': '/home/afro-robotics/robot_ws/src/image_acquisition', 'symlink_install': False, 'test_result_base': None}
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_args' from command line to 'None'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_target' from command line to 'None'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_clean_cache' from command line to 'False'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_clean_first' from command line to 'False'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_force_configure' from command line to 'False'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'ament_cmake_args' from command line to 'None'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'catkin_cmake_args' from command line to 'None'
+[1.070s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.071s] DEBUG:colcon.colcon_core.verb:Building package 'navigation' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/afro-robotics/robot_ws/build/navigation', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/afro-robotics/robot_ws/install/navigation', 'merge_install': False, 'path': '/home/afro-robotics/robot_ws/src/navigation', 'symlink_install': False, 'test_result_base': None}
+[1.071s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'cmake_args' from command line to 'None'
+[1.071s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'cmake_target' from command line to 'None'
+[1.071s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.071s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'cmake_clean_cache' from command line to 'False'
+[1.071s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'cmake_clean_first' from command line to 'False'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'cmake_force_configure' from command line to 'False'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'ament_cmake_args' from command line to 'None'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'catkin_cmake_args' from command line to 'None'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'orchestration' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.072s] DEBUG:colcon.colcon_core.verb:Building package 'orchestration' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/afro-robotics/robot_ws/build/orchestration', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/afro-robotics/robot_ws/install/orchestration', 'merge_install': False, 'path': '/home/afro-robotics/robot_ws/src/orchestration', 'symlink_install': False, 'test_result_base': None}
+[1.072s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.076s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.076s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/afro-robotics/robot_ws/src/image_acquisition' with build type 'ament_python'
+[1.077s] Level 1:colcon.colcon_core.shell:create_environment_hook('image_acquisition', 'ament_prefix_path')
+[1.082s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.083s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/hook/ament_prefix_path.ps1'
+[1.085s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/hook/ament_prefix_path.dsv'
+[1.087s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/hook/ament_prefix_path.sh'
+[1.089s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.089s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.098s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/afro-robotics/robot_ws/src/navigation' with build type 'ament_python'
+[1.099s] Level 1:colcon.colcon_core.shell:create_environment_hook('navigation', 'ament_prefix_path')
+[1.100s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/navigation/share/navigation/hook/ament_prefix_path.ps1'
+[1.101s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/afro-robotics/robot_ws/install/navigation/share/navigation/hook/ament_prefix_path.dsv'
+[1.102s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/navigation/share/navigation/hook/ament_prefix_path.sh'
+[1.104s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.104s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.111s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/afro-robotics/robot_ws/src/orchestration' with build type 'ament_python'
+[1.112s] Level 1:colcon.colcon_core.shell:create_environment_hook('orchestration', 'ament_prefix_path')
+[1.112s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/hook/ament_prefix_path.ps1'
+[1.114s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/hook/ament_prefix_path.dsv'
+[1.115s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/hook/ament_prefix_path.sh'
+[1.116s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.116s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.865s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/afro-robotics/robot_ws/src/image_acquisition'
+[1.867s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.867s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.575s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/afro-robotics/robot_ws/src/navigation'
+[2.577s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.577s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.296s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/afro-robotics/robot_ws/src/orchestration'
+[3.298s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.298s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.456s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/afro-robotics/robot_ws/src/navigation': PYTHONPATH=/home/afro-robotics/robot_ws/build/navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navigation build --build-base /home/afro-robotics/robot_ws/build/navigation/build install --record /home/afro-robotics/robot_ws/build/navigation/install.log --single-version-externally-managed install_data
+[4.482s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/afro-robotics/robot_ws/src/image_acquisition': PYTHONPATH=/home/afro-robotics/robot_ws/build/image_acquisition/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_acquisition build --build-base /home/afro-robotics/robot_ws/build/image_acquisition/build install --record /home/afro-robotics/robot_ws/build/image_acquisition/install.log --single-version-externally-managed install_data
+[4.489s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/afro-robotics/robot_ws/src/orchestration': PYTHONPATH=/home/afro-robotics/robot_ws/build/orchestration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/orchestration build --build-base /home/afro-robotics/robot_ws/build/orchestration/build install --record /home/afro-robotics/robot_ws/build/orchestration/install.log --single-version-externally-managed install_data
+[5.345s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/afro-robotics/robot_ws/src/navigation' returned '0': PYTHONPATH=/home/afro-robotics/robot_ws/build/navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navigation build --build-base /home/afro-robotics/robot_ws/build/navigation/build install --record /home/afro-robotics/robot_ws/build/navigation/install.log --single-version-externally-managed install_data
+[5.352s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/navigation' for CMake module files
+[5.355s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/navigation' for CMake config files
+[5.359s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/navigation/lib'
+[5.359s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/navigation/bin'
+[5.359s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/navigation/lib/pkgconfig/navigation.pc'
+[5.360s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages'
+[5.360s] Level 1:colcon.colcon_core.shell:create_environment_hook('navigation', 'pythonpath')
+[5.361s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/navigation/share/navigation/hook/pythonpath.ps1'
+[5.363s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/afro-robotics/robot_ws/install/navigation/share/navigation/hook/pythonpath.dsv'
+[5.365s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/navigation/share/navigation/hook/pythonpath.sh'
+[5.368s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/navigation/bin'
+[5.369s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(navigation)
+[5.370s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/navigation/share/navigation/package.ps1'
+[5.375s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/afro-robotics/robot_ws/install/navigation/share/navigation/package.dsv'
+[5.378s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/navigation/share/navigation/package.sh'
+[5.381s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/navigation/share/navigation/package.bash'
+[5.384s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/navigation/share/navigation/package.zsh'
+[5.387s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/afro-robotics/robot_ws/install/navigation/share/colcon-core/packages/navigation)
+[5.392s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/orchestration' for CMake module files
+[5.394s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/afro-robotics/robot_ws/src/orchestration' returned '0': PYTHONPATH=/home/afro-robotics/robot_ws/build/orchestration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/orchestration build --build-base /home/afro-robotics/robot_ws/build/orchestration/build install --record /home/afro-robotics/robot_ws/build/orchestration/install.log --single-version-externally-managed install_data
+[5.395s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/orchestration' for CMake config files
+[5.398s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/orchestration/lib'
+[5.398s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/orchestration/bin'
+[5.398s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/orchestration/lib/pkgconfig/orchestration.pc'
+[5.399s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages'
+[5.400s] Level 1:colcon.colcon_core.shell:create_environment_hook('orchestration', 'pythonpath')
+[5.401s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/hook/pythonpath.ps1'
+[5.403s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/hook/pythonpath.dsv'
+[5.404s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/hook/pythonpath.sh'
+[5.407s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/orchestration/bin'
+[5.408s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(orchestration)
+[5.409s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/package.ps1'
+[5.411s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/package.dsv'
+[5.413s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/package.sh'
+[5.415s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/package.bash'
+[5.416s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/orchestration/share/orchestration/package.zsh'
+[5.417s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/afro-robotics/robot_ws/install/orchestration/share/colcon-core/packages/orchestration)
+[5.419s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/image_acquisition' for CMake module files
+[5.423s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/image_acquisition' for CMake config files
+[5.424s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/afro-robotics/robot_ws/src/image_acquisition' returned '0': PYTHONPATH=/home/afro-robotics/robot_ws/build/image_acquisition/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_acquisition build --build-base /home/afro-robotics/robot_ws/build/image_acquisition/build install --record /home/afro-robotics/robot_ws/build/image_acquisition/install.log --single-version-externally-managed install_data
+[5.426s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/image_acquisition/lib'
+[5.427s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/image_acquisition/bin'
+[5.427s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/image_acquisition/lib/pkgconfig/image_acquisition.pc'
+[5.428s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages'
+[5.428s] Level 1:colcon.colcon_core.shell:create_environment_hook('image_acquisition', 'pythonpath')
+[5.429s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/hook/pythonpath.ps1'
+[5.431s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/hook/pythonpath.dsv'
+[5.432s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/hook/pythonpath.sh'
+[5.435s] Level 1:colcon.colcon_core.environment:checking '/home/afro-robotics/robot_ws/install/image_acquisition/bin'
+[5.435s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(image_acquisition)
+[5.436s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/package.ps1'
+[5.438s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/package.dsv'
+[5.440s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/package.sh'
+[5.441s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/package.bash'
+[5.443s] INFO:colcon.colcon_core.shell:Creating package script '/home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/package.zsh'
+[5.444s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/afro-robotics/robot_ws/install/image_acquisition/share/colcon-core/packages/image_acquisition)
+[5.445s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[5.446s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[5.446s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[5.447s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[5.468s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[5.468s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[5.469s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[5.522s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[5.524s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/afro-robotics/robot_ws/install/local_setup.ps1'
+[5.528s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/afro-robotics/robot_ws/install/_local_setup_util_ps1.py'
+[5.533s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/afro-robotics/robot_ws/install/setup.ps1'
+[5.537s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/afro-robotics/robot_ws/install/local_setup.sh'
+[5.539s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/afro-robotics/robot_ws/install/_local_setup_util_sh.py'
+[5.541s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/afro-robotics/robot_ws/install/setup.sh'
+[5.545s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/afro-robotics/robot_ws/install/local_setup.bash'
+[5.547s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/afro-robotics/robot_ws/install/setup.bash'
+[5.550s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/afro-robotics/robot_ws/install/local_setup.zsh'
+[5.552s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/afro-robotics/robot_ws/install/setup.zsh'

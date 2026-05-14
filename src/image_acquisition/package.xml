@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>image_acquisition</name>
+  <version>0.0.1</version>
+  <description>Image acquisition and YOLO detection — Module 1</description>
+  <maintainer email="robot@robot.com">robot</maintainer>
+  <license>MIT</license>
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>vision_msgs</depend>
+  <depend>cv_bridge</depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

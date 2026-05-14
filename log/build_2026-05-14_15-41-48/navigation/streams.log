@@ -1,0 +1,22 @@
+[1.308s] Invoking command in '/home/afro-robotics/robot_ws/src/navigation': PYTHONPATH=/home/afro-robotics/robot_ws/build/navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navigation build --build-base /home/afro-robotics/robot_ws/build/navigation/build install --record /home/afro-robotics/robot_ws/build/navigation/install.log --single-version-externally-managed install_data
+[1.831s] running egg_info
+[1.832s] writing ../../build/navigation/navigation.egg-info/PKG-INFO
+[1.833s] writing dependency_links to ../../build/navigation/navigation.egg-info/dependency_links.txt
+[1.833s] writing entry points to ../../build/navigation/navigation.egg-info/entry_points.txt
+[1.834s] writing requirements to ../../build/navigation/navigation.egg-info/requires.txt
+[1.834s] writing top-level names to ../../build/navigation/navigation.egg-info/top_level.txt
+[1.838s] reading manifest file '../../build/navigation/navigation.egg-info/SOURCES.txt'
+[1.839s] writing manifest file '../../build/navigation/navigation.egg-info/SOURCES.txt'
+[1.840s] running build
+[1.840s] running build_py
+[1.841s] running install
+[1.841s] running install_lib
+[1.844s] running install_data
+[1.844s] running install_egg_info
+[1.848s] removing '/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation-0.0.0-py3.10.egg-info' (and everything under it)
+[1.848s] Copying ../../build/navigation/navigation.egg-info to /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation-0.0.0-py3.10.egg-info
+[1.850s] running install_scripts
+[1.890s] Installing motor_node script to /home/afro-robotics/robot_ws/install/navigation/lib/navigation
+[1.891s] Installing navigation_node script to /home/afro-robotics/robot_ws/install/navigation/lib/navigation
+[1.891s] writing list of installed files to '/home/afro-robotics/robot_ws/build/navigation/install.log'
+[1.960s] Invoked command in '/home/afro-robotics/robot_ws/src/navigation' returned '0': PYTHONPATH=/home/afro-robotics/robot_ws/build/navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navigation build --build-base /home/afro-robotics/robot_ws/build/navigation/build install --record /home/afro-robotics/robot_ws/build/navigation/install.log --single-version-externally-managed install_data

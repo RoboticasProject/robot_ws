@@ -1,0 +1,33 @@
+[3.173s] Invoking command in '/home/afro-robotics/robot_ws/src/orchestration': PYTHONPATH=/home/afro-robotics/robot_ws/build/orchestration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/orchestration build --build-base /home/afro-robotics/robot_ws/build/orchestration/build install --record /home/afro-robotics/robot_ws/build/orchestration/install.log --single-version-externally-managed install_data
+[3.895s] running egg_info
+[3.897s] creating ../../build/orchestration/orchestration.egg-info
+[3.897s] writing ../../build/orchestration/orchestration.egg-info/PKG-INFO
+[3.898s] writing dependency_links to ../../build/orchestration/orchestration.egg-info/dependency_links.txt
+[3.899s] writing entry points to ../../build/orchestration/orchestration.egg-info/entry_points.txt
+[3.899s] writing requirements to ../../build/orchestration/orchestration.egg-info/requires.txt
+[3.899s] writing top-level names to ../../build/orchestration/orchestration.egg-info/top_level.txt
+[3.900s] writing manifest file '../../build/orchestration/orchestration.egg-info/SOURCES.txt'
+[3.907s] reading manifest file '../../build/orchestration/orchestration.egg-info/SOURCES.txt'
+[3.908s] writing manifest file '../../build/orchestration/orchestration.egg-info/SOURCES.txt'
+[3.908s] running build
+[3.908s] running build_py
+[3.908s] creating /home/afro-robotics/robot_ws/build/orchestration/build
+[3.909s] creating /home/afro-robotics/robot_ws/build/orchestration/build/lib
+[3.909s] creating /home/afro-robotics/robot_ws/build/orchestration/build/lib/orchestration
+[3.909s] copying orchestration/__init__.py -> /home/afro-robotics/robot_ws/build/orchestration/build/lib/orchestration
+[3.909s] running install
+[3.911s] running install_lib
+[3.918s] creating /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration
+[3.918s] copying /home/afro-robotics/robot_ws/build/orchestration/build/lib/orchestration/__init__.py -> /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration
+[3.921s] byte-compiling /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration/__init__.py to __init__.cpython-310.pyc
+[3.922s] running install_data
+[3.923s] creating /home/afro-robotics/robot_ws/install/orchestration/share/ament_index
+[3.923s] creating /home/afro-robotics/robot_ws/install/orchestration/share/ament_index/resource_index
+[3.923s] creating /home/afro-robotics/robot_ws/install/orchestration/share/ament_index/resource_index/packages
+[3.924s] copying resource/orchestration -> /home/afro-robotics/robot_ws/install/orchestration/share/ament_index/resource_index/packages
+[3.924s] copying package.xml -> /home/afro-robotics/robot_ws/install/orchestration/share/orchestration
+[3.924s] running install_egg_info
+[3.928s] Copying ../../build/orchestration/orchestration.egg-info to /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration-0.0.0-py3.10.egg-info
+[3.931s] running install_scripts
+[3.995s] writing list of installed files to '/home/afro-robotics/robot_ws/build/orchestration/install.log'
+[4.152s] Invoked command in '/home/afro-robotics/robot_ws/src/orchestration' returned '0': PYTHONPATH=/home/afro-robotics/robot_ws/build/orchestration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/orchestration build --build-base /home/afro-robotics/robot_ws/build/orchestration/build install --record /home/afro-robotics/robot_ws/build/orchestration/install.log --single-version-externally-managed install_data

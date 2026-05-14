@@ -1,0 +1,110 @@
+[0.000000] (-) TimerEvent: {}
+[0.000959] (-) JobUnselected: {'identifier': 'orchestration'}
+[0.001961] (image_acquisition) JobQueued: {'identifier': 'image_acquisition', 'dependencies': OrderedDict()}
+[0.002619] (navigation) JobQueued: {'identifier': 'navigation', 'dependencies': OrderedDict()}
+[0.002763] (image_acquisition) JobStarted: {'identifier': 'image_acquisition'}
+[0.041002] (navigation) JobStarted: {'identifier': 'navigation'}
+[0.098663] (-) TimerEvent: {}
+[0.199218] (-) TimerEvent: {}
+[0.299661] (-) TimerEvent: {}
+[0.400148] (-) TimerEvent: {}
+[0.500598] (-) TimerEvent: {}
+[0.601048] (-) TimerEvent: {}
+[0.701596] (-) TimerEvent: {}
+[0.802132] (-) TimerEvent: {}
+[0.902627] (-) TimerEvent: {}
+[1.003074] (-) TimerEvent: {}
+[1.103562] (-) TimerEvent: {}
+[1.204027] (-) TimerEvent: {}
+[1.304488] (-) TimerEvent: {}
+[1.404937] (-) TimerEvent: {}
+[1.505403] (-) TimerEvent: {}
+[1.605858] (-) TimerEvent: {}
+[1.706337] (-) TimerEvent: {}
+[1.806843] (-) TimerEvent: {}
+[1.907303] (-) TimerEvent: {}
+[2.007748] (-) TimerEvent: {}
+[2.108204] (-) TimerEvent: {}
+[2.208663] (-) TimerEvent: {}
+[2.309111] (-) TimerEvent: {}
+[2.409678] (-) TimerEvent: {}
+[2.510135] (-) TimerEvent: {}
+[2.610628] (-) TimerEvent: {}
+[2.711110] (-) TimerEvent: {}
+[2.811584] (-) TimerEvent: {}
+[2.912091] (-) TimerEvent: {}
+[3.012547] (-) TimerEvent: {}
+[3.121481] (-) TimerEvent: {}
+[3.221944] (-) TimerEvent: {}
+[3.322381] (-) TimerEvent: {}
+[3.422874] (-) TimerEvent: {}
+[3.523457] (-) TimerEvent: {}
+[3.624143] (-) TimerEvent: {}
+[3.724715] (-) TimerEvent: {}
+[3.826223] (-) TimerEvent: {}
+[3.926741] (-) TimerEvent: {}
+[4.007124] (image_acquisition) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/image_acquisition', 'build', '--build-base', '/home/afro-robotics/robot_ws/build/image_acquisition/build', 'install', '--record', '/home/afro-robotics/robot_ws/build/image_acquisition/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/afro-robotics/robot_ws/src/image_acquisition', 'env': {'GJS_DEBUG_TOPICS': 'JS ERROR;JS LOG', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'AI_AGENT': 'claude-code_2-1-139_agent', 'USER': 'afro-robotics', 'CLAUDE_CODE_ENTRYPOINT': 'cli', 'LC_TIME': 'ar_MA.UTF-8', 'GIT_EDITOR': 'true', 'XDG_SESSION_TYPE': 'x11', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/afro-robotics/.local/lib/python3.10/site-packages/nvidia/cusparselt/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'HOME': '/home/afro-robotics', 'OLDPWD': '/home/afro-robotics/Downloads', 'DESKTOP_SESSION': 'ubuntu', 'GIO_LAUNCHED_DESKTOP_FILE': '/usr/share/applications/terminator.desktop', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'LC_MONETARY': 'ar_MA.UTF-8', 'MANAGERPID': '1566', 'SYSTEMD_EXEC_PID': '2190', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'TERMINATOR_DBUS_NAME': 'net.tenshu.Terminator21a9d5db22c73a993ff0b42f64b396873', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '16038', 'IM_CONFIG_PHASE': '1', 'COLCON_PREFIX_PATH': '/home/afro-robotics/robot_ws/install', 'ROS_DISTRO': 'humble', 'GTK_IM_MODULE': 'ibus', 'LOGNAME': 'afro-robotics', 'JOURNAL_STREAM': '8:38907', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'afro-robotics', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'ROS_LOCALHOST_ONLY': '0', 'WINDOWPATH': '2', 'PATH': '/opt/ros/humble/bin:/home/afro-robotics/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/afrorobotics-desktop:@/tmp/.ICE-unix/2158,unix/afrorobotics-desktop:/tmp/.ICE-unix/2158', 'INVOCATION_ID': '72c3ae51617742e583b8ce4ff207a392', 'COREPACK_ENABLE_AUTO_PIN': '0', 'XDG_MENU_PREFIX': 'gnome-', 'LC_ADDRESS': 'ar_MA.UTF-8', 'XDG_RUNTIME_DIR': '/run/user/1000', 'CLAUDE_EFFORT': 'high', 'DISPLAY': ':0', 'TERMINATOR_DBUS_PATH': '/net/tenshu/Terminator2', 'NoDefaultCurrentDirectoryInExePath': '1', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'IBUS_DISABLE_SNOOPER': '1', 'LC_TELEPHONE': 'ar_MA.UTF-8', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SSH_AGENT_LAUNCHER': 'gnome-keyring', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'AMENT_PREFIX_PATH': '/home/afro-robotics/robot_ws/install/orchestration:/home/afro-robotics/robot_ws/install/navigation:/home/afro-robotics/robot_ws/install/image_acquisition:/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'ar_MA.UTF-8', 'TERMINATOR_UUID': 'urn:uuid:1a50ef8e-66fb-4bdb-b25e-a015ae609b38', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'CLAUDE_CODE_SESSION_ID': '341d9fc2-a02a-4254-953b-4ea098cef1f3', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'CLAUDECODE': '1', 'LC_MEASUREMENT': 'ar_MA.UTF-8', 'GPG_AGENT_INFO': '/run/user/1000/gnupg/S.gpg-agent:0:1', 'GJS_DEBUG_OUTPUT': 'stderr', 'LC_IDENTIFICATION': 'ar_MA.UTF-8', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/afro-robotics/robot_ws/build/image_acquisition', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'CLAUDE_CODE_EXECPATH': '/home/afro-robotics/.local/share/claude/versions/2.1.139', 'PYTHONPATH': '/home/afro-robotics/robot_ws/build/image_acquisition/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:/home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages:/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'ar_MA.UTF-8', 'LC_PAPER': 'ar_MA.UTF-8', 'COLCON': '1', 'VTE_VERSION': '6800'}, 'shell': False}
+[4.018717] (navigation) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/navigation', 'build', '--build-base', '/home/afro-robotics/robot_ws/build/navigation/build', 'install', '--record', '/home/afro-robotics/robot_ws/build/navigation/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/afro-robotics/robot_ws/src/navigation', 'env': {'GJS_DEBUG_TOPICS': 'JS ERROR;JS LOG', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'AI_AGENT': 'claude-code_2-1-139_agent', 'USER': 'afro-robotics', 'CLAUDE_CODE_ENTRYPOINT': 'cli', 'LC_TIME': 'ar_MA.UTF-8', 'GIT_EDITOR': 'true', 'XDG_SESSION_TYPE': 'x11', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/afro-robotics/.local/lib/python3.10/site-packages/nvidia/cusparselt/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'HOME': '/home/afro-robotics', 'OLDPWD': '/home/afro-robotics/Downloads', 'DESKTOP_SESSION': 'ubuntu', 'GIO_LAUNCHED_DESKTOP_FILE': '/usr/share/applications/terminator.desktop', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'LC_MONETARY': 'ar_MA.UTF-8', 'MANAGERPID': '1566', 'SYSTEMD_EXEC_PID': '2190', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'TERMINATOR_DBUS_NAME': 'net.tenshu.Terminator21a9d5db22c73a993ff0b42f64b396873', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '16038', 'IM_CONFIG_PHASE': '1', 'COLCON_PREFIX_PATH': '/home/afro-robotics/robot_ws/install', 'ROS_DISTRO': 'humble', 'GTK_IM_MODULE': 'ibus', 'LOGNAME': 'afro-robotics', 'JOURNAL_STREAM': '8:38907', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'afro-robotics', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'ROS_LOCALHOST_ONLY': '0', 'WINDOWPATH': '2', 'PATH': '/opt/ros/humble/bin:/home/afro-robotics/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/afrorobotics-desktop:@/tmp/.ICE-unix/2158,unix/afrorobotics-desktop:/tmp/.ICE-unix/2158', 'INVOCATION_ID': '72c3ae51617742e583b8ce4ff207a392', 'COREPACK_ENABLE_AUTO_PIN': '0', 'XDG_MENU_PREFIX': 'gnome-', 'LC_ADDRESS': 'ar_MA.UTF-8', 'XDG_RUNTIME_DIR': '/run/user/1000', 'CLAUDE_EFFORT': 'high', 'DISPLAY': ':0', 'TERMINATOR_DBUS_PATH': '/net/tenshu/Terminator2', 'NoDefaultCurrentDirectoryInExePath': '1', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'IBUS_DISABLE_SNOOPER': '1', 'LC_TELEPHONE': 'ar_MA.UTF-8', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SSH_AGENT_LAUNCHER': 'gnome-keyring', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'AMENT_PREFIX_PATH': '/home/afro-robotics/robot_ws/install/orchestration:/home/afro-robotics/robot_ws/install/navigation:/home/afro-robotics/robot_ws/install/image_acquisition:/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'ar_MA.UTF-8', 'TERMINATOR_UUID': 'urn:uuid:1a50ef8e-66fb-4bdb-b25e-a015ae609b38', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'CLAUDE_CODE_SESSION_ID': '341d9fc2-a02a-4254-953b-4ea098cef1f3', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'CLAUDECODE': '1', 'LC_MEASUREMENT': 'ar_MA.UTF-8', 'GPG_AGENT_INFO': '/run/user/1000/gnupg/S.gpg-agent:0:1', 'GJS_DEBUG_OUTPUT': 'stderr', 'LC_IDENTIFICATION': 'ar_MA.UTF-8', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/afro-robotics/robot_ws/build/navigation', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'CLAUDE_CODE_EXECPATH': '/home/afro-robotics/.local/share/claude/versions/2.1.139', 'PYTHONPATH': '/home/afro-robotics/robot_ws/build/navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages:/home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages:/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'ar_MA.UTF-8', 'LC_PAPER': 'ar_MA.UTF-8', 'COLCON': '1', 'VTE_VERSION': '6800'}, 'shell': False}
+[4.026832] (-) TimerEvent: {}
+[4.130625] (-) TimerEvent: {}
+[4.231939] (-) TimerEvent: {}
+[4.332399] (-) TimerEvent: {}
+[4.432852] (-) TimerEvent: {}
+[4.533307] (-) TimerEvent: {}
+[4.633775] (-) TimerEvent: {}
+[4.734227] (-) TimerEvent: {}
+[4.834715] (-) TimerEvent: {}
+[4.935180] (-) TimerEvent: {}
+[5.035621] (-) TimerEvent: {}
+[5.036650] (image_acquisition) StdoutLine: {'line': b'running egg_info\n'}
+[5.043194] (image_acquisition) StdoutLine: {'line': b'writing ../../build/image_acquisition/image_acquisition.egg-info/PKG-INFO\n'}
+[5.044598] (image_acquisition) StdoutLine: {'line': b'writing dependency_links to ../../build/image_acquisition/image_acquisition.egg-info/dependency_links.txt\n'}
+[5.045745] (image_acquisition) StdoutLine: {'line': b'writing entry points to ../../build/image_acquisition/image_acquisition.egg-info/entry_points.txt\n'}
+[5.046741] (image_acquisition) StdoutLine: {'line': b'writing requirements to ../../build/image_acquisition/image_acquisition.egg-info/requires.txt\n'}
+[5.047554] (image_acquisition) StdoutLine: {'line': b'writing top-level names to ../../build/image_acquisition/image_acquisition.egg-info/top_level.txt\n'}
+[5.055836] (image_acquisition) StdoutLine: {'line': b"reading manifest file '../../build/image_acquisition/image_acquisition.egg-info/SOURCES.txt'\n"}
+[5.061105] (image_acquisition) StdoutLine: {'line': b"writing manifest file '../../build/image_acquisition/image_acquisition.egg-info/SOURCES.txt'\n"}
+[5.062859] (image_acquisition) StdoutLine: {'line': b'running build\n'}
+[5.063660] (image_acquisition) StdoutLine: {'line': b'running build_py\n'}
+[5.065085] (image_acquisition) StdoutLine: {'line': b'copying image_acquisition/yolo_detection_node.py -> /home/afro-robotics/robot_ws/build/image_acquisition/build/lib/image_acquisition\n'}
+[5.066985] (image_acquisition) StdoutLine: {'line': b'running install\n'}
+[5.068446] (image_acquisition) StdoutLine: {'line': b'running install_lib\n'}
+[5.071845] (image_acquisition) StdoutLine: {'line': b'copying /home/afro-robotics/robot_ws/build/image_acquisition/build/lib/image_acquisition/yolo_detection_node.py -> /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition\n'}
+[5.074499] (image_acquisition) StdoutLine: {'line': b'byte-compiling /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition/yolo_detection_node.py to yolo_detection_node.cpython-310.pyc\n'}
+[5.084148] (image_acquisition) StdoutLine: {'line': b'running install_data\n'}
+[5.085219] (image_acquisition) StdoutLine: {'line': b'copying launch/image_acquisition.launch.py -> /home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/launch\n'}
+[5.091115] (image_acquisition) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.101957] (image_acquisition) StdoutLine: {'line': b"removing '/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition-0.0.1-py3.10.egg-info' (and everything under it)\n"}
+[5.102606] (navigation) StdoutLine: {'line': b'running egg_info\n'}
+[5.103418] (image_acquisition) StdoutLine: {'line': b'Copying ../../build/image_acquisition/image_acquisition.egg-info to /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition-0.0.1-py3.10.egg-info\n'}
+[5.107039] (navigation) StdoutLine: {'line': b'writing ../../build/navigation/navigation.egg-info/PKG-INFO\n'}
+[5.107875] (navigation) StdoutLine: {'line': b'writing dependency_links to ../../build/navigation/navigation.egg-info/dependency_links.txt\n'}
+[5.109138] (navigation) StdoutLine: {'line': b'writing entry points to ../../build/navigation/navigation.egg-info/entry_points.txt\n'}
+[5.109917] (navigation) StdoutLine: {'line': b'writing requirements to ../../build/navigation/navigation.egg-info/requires.txt\n'}
+[5.110313] (image_acquisition) StdoutLine: {'line': b'running install_scripts\n'}
+[5.111764] (navigation) StdoutLine: {'line': b'writing top-level names to ../../build/navigation/navigation.egg-info/top_level.txt\n'}
+[5.118572] (navigation) StdoutLine: {'line': b"reading manifest file '../../build/navigation/navigation.egg-info/SOURCES.txt'\n"}
+[5.136022] (-) TimerEvent: {}
+[5.159460] (navigation) StdoutLine: {'line': b"writing manifest file '../../build/navigation/navigation.egg-info/SOURCES.txt'\n"}
+[5.162183] (navigation) StdoutLine: {'line': b'running build\n'}
+[5.163334] (navigation) StdoutLine: {'line': b'running build_py\n'}
+[5.163815] (navigation) StdoutLine: {'line': b'running install\n'}
+[5.164783] (navigation) StdoutLine: {'line': b'running install_lib\n'}
+[5.170973] (navigation) StdoutLine: {'line': b'running install_data\n'}
+[5.171560] (navigation) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.187725] (navigation) StdoutLine: {'line': b"removing '/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[5.188550] (navigation) StdoutLine: {'line': b'Copying ../../build/navigation/navigation.egg-info to /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation-0.0.0-py3.10.egg-info\n'}
+[5.192879] (navigation) StdoutLine: {'line': b'running install_scripts\n'}
+[5.196202] (image_acquisition) StdoutLine: {'line': b'Installing camera_node script to /home/afro-robotics/robot_ws/install/image_acquisition/lib/image_acquisition\n'}
+[5.197555] (image_acquisition) StdoutLine: {'line': b'Installing yolo_detection_node script to /home/afro-robotics/robot_ws/install/image_acquisition/lib/image_acquisition\n'}
+[5.198675] (image_acquisition) StdoutLine: {'line': b"writing list of installed files to '/home/afro-robotics/robot_ws/build/image_acquisition/install.log'\n"}
+[5.237075] (-) TimerEvent: {}
+[5.301013] (navigation) StdoutLine: {'line': b'Installing motor_node script to /home/afro-robotics/robot_ws/install/navigation/lib/navigation\n'}
+[5.305279] (navigation) StdoutLine: {'line': b"writing list of installed files to '/home/afro-robotics/robot_ws/build/navigation/install.log'\n"}
+[5.316721] (image_acquisition) CommandEnded: {'returncode': 0}
+[5.337446] (-) TimerEvent: {}
+[5.422135] (image_acquisition) JobEnded: {'identifier': 'image_acquisition', 'rc': 0}
+[5.427768] (navigation) CommandEnded: {'returncode': 0}
+[5.438030] (-) TimerEvent: {}
+[5.457074] (navigation) JobEnded: {'identifier': 'navigation', 'rc': 0}
+[5.459475] (-) EventReactorShutdown: {}

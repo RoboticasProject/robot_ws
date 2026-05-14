@@ -1,0 +1,4 @@
+[0.038s] Invoking command in '/home/afro-robotics/robot_ws/build/image_acquisition': /usr/bin/cmake /home/afro-robotics/robot_ws/src/image_acquisition -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/afro-robotics/robot_ws/install/image_acquisition
+[0.194s] [0mCMake Error: The source directory "/home/afro-robotics/robot_ws/src/image_acquisition" does not appear to contain CMakeLists.txt.
+[0.196s] Specify --help for usage, or press the help button on the CMake GUI.[0m
+[0.201s] Invoked command in '/home/afro-robotics/robot_ws/build/image_acquisition' returned '1': /usr/bin/cmake /home/afro-robotics/robot_ws/src/image_acquisition -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCMAKE_INSTALL_PREFIX=/home/afro-robotics/robot_ws/install/image_acquisition

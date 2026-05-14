@@ -1,0 +1,4 @@
+[console_scripts]
+camera_node = image_acquisition.camera_node:main
+yolo_detection_node = image_acquisition.yolo_detection_node:main
+

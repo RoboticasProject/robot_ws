@@ -1,0 +1,33 @@
+[3.218s] Invoking command in '/home/afro-robotics/robot_ws/src/image_acquisition': PYTHONPATH=/home/afro-robotics/robot_ws/build/image_acquisition/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_acquisition build --build-base /home/afro-robotics/robot_ws/build/image_acquisition/build install --record /home/afro-robotics/robot_ws/build/image_acquisition/install.log --single-version-externally-managed install_data
+[3.949s] running egg_info
+[3.951s] creating ../../build/image_acquisition/image_acquisition.egg-info
+[3.952s] writing ../../build/image_acquisition/image_acquisition.egg-info/PKG-INFO
+[3.952s] writing dependency_links to ../../build/image_acquisition/image_acquisition.egg-info/dependency_links.txt
+[3.954s] writing entry points to ../../build/image_acquisition/image_acquisition.egg-info/entry_points.txt
+[3.954s] writing requirements to ../../build/image_acquisition/image_acquisition.egg-info/requires.txt
+[3.955s] writing top-level names to ../../build/image_acquisition/image_acquisition.egg-info/top_level.txt
+[3.955s] writing manifest file '../../build/image_acquisition/image_acquisition.egg-info/SOURCES.txt'
+[3.959s] reading manifest file '../../build/image_acquisition/image_acquisition.egg-info/SOURCES.txt'
+[3.961s] writing manifest file '../../build/image_acquisition/image_acquisition.egg-info/SOURCES.txt'
+[3.962s] running build
+[3.962s] running build_py
+[3.962s] creating /home/afro-robotics/robot_ws/build/image_acquisition/build
+[3.963s] creating /home/afro-robotics/robot_ws/build/image_acquisition/build/lib
+[3.963s] creating /home/afro-robotics/robot_ws/build/image_acquisition/build/lib/image_acquisition
+[3.963s] copying image_acquisition/__init__.py -> /home/afro-robotics/robot_ws/build/image_acquisition/build/lib/image_acquisition
+[3.963s] running install
+[3.964s] running install_lib
+[3.976s] creating /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition
+[3.976s] copying /home/afro-robotics/robot_ws/build/image_acquisition/build/lib/image_acquisition/__init__.py -> /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition
+[3.976s] byte-compiling /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition/__init__.py to __init__.cpython-310.pyc
+[3.977s] running install_data
+[3.977s] creating /home/afro-robotics/robot_ws/install/image_acquisition/share/ament_index
+[3.977s] creating /home/afro-robotics/robot_ws/install/image_acquisition/share/ament_index/resource_index
+[3.977s] creating /home/afro-robotics/robot_ws/install/image_acquisition/share/ament_index/resource_index/packages
+[3.978s] copying resource/image_acquisition -> /home/afro-robotics/robot_ws/install/image_acquisition/share/ament_index/resource_index/packages
+[3.978s] copying package.xml -> /home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition
+[3.978s] running install_egg_info
+[3.985s] Copying ../../build/image_acquisition/image_acquisition.egg-info to /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition-0.0.0-py3.10.egg-info
+[3.987s] running install_scripts
+[4.053s] writing list of installed files to '/home/afro-robotics/robot_ws/build/image_acquisition/install.log'
+[4.211s] Invoked command in '/home/afro-robotics/robot_ws/src/image_acquisition' returned '0': PYTHONPATH=/home/afro-robotics/robot_ws/build/image_acquisition/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_acquisition build --build-base /home/afro-robotics/robot_ws/build/image_acquisition/build install --record /home/afro-robotics/robot_ws/build/image_acquisition/install.log --single-version-externally-managed install_data

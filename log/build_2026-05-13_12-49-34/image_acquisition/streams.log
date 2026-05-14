@@ -1,0 +1,26 @@
+[1.364s] Invoking command in '/home/afro-robotics/robot_ws/src/image_acquisition': PYTHONPATH=/home/afro-robotics/robot_ws/build/image_acquisition/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_acquisition build --build-base /home/afro-robotics/robot_ws/build/image_acquisition/build install --record /home/afro-robotics/robot_ws/build/image_acquisition/install.log --single-version-externally-managed install_data
+[1.917s] running egg_info
+[1.921s] writing ../../build/image_acquisition/image_acquisition.egg-info/PKG-INFO
+[1.921s] writing dependency_links to ../../build/image_acquisition/image_acquisition.egg-info/dependency_links.txt
+[1.922s] writing entry points to ../../build/image_acquisition/image_acquisition.egg-info/entry_points.txt
+[1.922s] writing requirements to ../../build/image_acquisition/image_acquisition.egg-info/requires.txt
+[1.923s] writing top-level names to ../../build/image_acquisition/image_acquisition.egg-info/top_level.txt
+[1.927s] reading manifest file '../../build/image_acquisition/image_acquisition.egg-info/SOURCES.txt'
+[1.930s] writing manifest file '../../build/image_acquisition/image_acquisition.egg-info/SOURCES.txt'
+[1.930s] running build
+[1.930s] running build_py
+[1.931s] copying image_acquisition/yolo_detection_node.py -> /home/afro-robotics/robot_ws/build/image_acquisition/build/lib/image_acquisition
+[1.931s] running install
+[1.932s] running install_lib
+[1.934s] copying /home/afro-robotics/robot_ws/build/image_acquisition/build/lib/image_acquisition/yolo_detection_node.py -> /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition
+[1.935s] byte-compiling /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition/yolo_detection_node.py to yolo_detection_node.cpython-310.pyc
+[1.940s] running install_data
+[1.940s] copying launch/image_acquisition.launch.py -> /home/afro-robotics/robot_ws/install/image_acquisition/share/image_acquisition/launch
+[1.940s] running install_egg_info
+[1.944s] removing '/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition-0.0.1-py3.10.egg-info' (and everything under it)
+[1.945s] Copying ../../build/image_acquisition/image_acquisition.egg-info to /home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages/image_acquisition-0.0.1-py3.10.egg-info
+[1.948s] running install_scripts
+[1.990s] Installing camera_node script to /home/afro-robotics/robot_ws/install/image_acquisition/lib/image_acquisition
+[1.990s] Installing yolo_detection_node script to /home/afro-robotics/robot_ws/install/image_acquisition/lib/image_acquisition
+[1.991s] writing list of installed files to '/home/afro-robotics/robot_ws/build/image_acquisition/install.log'
+[2.061s] Invoked command in '/home/afro-robotics/robot_ws/src/image_acquisition' returned '0': PYTHONPATH=/home/afro-robotics/robot_ws/build/image_acquisition/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/afro-robotics/robot_ws/install/image_acquisition/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/image_acquisition build --build-base /home/afro-robotics/robot_ws/build/image_acquisition/build install --record /home/afro-robotics/robot_ws/build/image_acquisition/install.log --single-version-externally-managed install_data

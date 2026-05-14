@@ -1,0 +1,31 @@
+running egg_info
+creating ../../build/orchestration/orchestration.egg-info
+writing ../../build/orchestration/orchestration.egg-info/PKG-INFO
+writing dependency_links to ../../build/orchestration/orchestration.egg-info/dependency_links.txt
+writing entry points to ../../build/orchestration/orchestration.egg-info/entry_points.txt
+writing requirements to ../../build/orchestration/orchestration.egg-info/requires.txt
+writing top-level names to ../../build/orchestration/orchestration.egg-info/top_level.txt
+writing manifest file '../../build/orchestration/orchestration.egg-info/SOURCES.txt'
+reading manifest file '../../build/orchestration/orchestration.egg-info/SOURCES.txt'
+writing manifest file '../../build/orchestration/orchestration.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/afro-robotics/robot_ws/build/orchestration/build
+creating /home/afro-robotics/robot_ws/build/orchestration/build/lib
+creating /home/afro-robotics/robot_ws/build/orchestration/build/lib/orchestration
+copying orchestration/__init__.py -> /home/afro-robotics/robot_ws/build/orchestration/build/lib/orchestration
+running install
+running install_lib
+creating /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration
+copying /home/afro-robotics/robot_ws/build/orchestration/build/lib/orchestration/__init__.py -> /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration
+byte-compiling /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/afro-robotics/robot_ws/install/orchestration/share/ament_index
+creating /home/afro-robotics/robot_ws/install/orchestration/share/ament_index/resource_index
+creating /home/afro-robotics/robot_ws/install/orchestration/share/ament_index/resource_index/packages
+copying resource/orchestration -> /home/afro-robotics/robot_ws/install/orchestration/share/ament_index/resource_index/packages
+copying package.xml -> /home/afro-robotics/robot_ws/install/orchestration/share/orchestration
+running install_egg_info
+Copying ../../build/orchestration/orchestration.egg-info to /home/afro-robotics/robot_ws/install/orchestration/lib/python3.10/site-packages/orchestration-0.0.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/home/afro-robotics/robot_ws/build/orchestration/install.log'
