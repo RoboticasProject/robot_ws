@@ -1,7 +1,17 @@
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/scan_gpio.py
 /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/motor_node.py
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/test_calibration.py
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/test_sync.py
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/encoder_reader.py
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/test_motors.py
 /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__init__.py
 /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/navigation_node.py
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/scan_gpio.cpython-310.pyc
 /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/motor_node.cpython-310.pyc
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/test_calibration.cpython-310.pyc
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/test_sync.cpython-310.pyc
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/encoder_reader.cpython-310.pyc
+/home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/test_motors.cpython-310.pyc
 /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/__init__.cpython-310.pyc
 /home/afro-robotics/robot_ws/install/navigation/lib/python3.10/site-packages/navigation/__pycache__/navigation_node.cpython-310.pyc
 /home/afro-robotics/robot_ws/install/navigation/share/ament_index/resource_index/packages/navigation

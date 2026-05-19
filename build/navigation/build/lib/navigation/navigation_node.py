@@ -17,34 +17,37 @@ Bins (coins de la salle 2×2 m, robot démarre en (0,0) face +X)
 
 import math
 import time
-import threading
 
 import rclpy
 from rclpy.node import Node
 from vision_msgs.msg import Detection2DArray
 import smbus2
-import Jetson.GPIO as GPIO
+
+from .encoder_reader import enc_G, enc_D, PPR_EFFECTIF
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  GÉOMÉTRIE ROBOT
 # ═══════════════════════════════════════════════════════════════════════════════
-PPR           = 663
+PPR           = PPR_EFFECTIF   # 1326 pulses/tour (libgpiod BOTH_EDGES)
 WHEEL_DIAM_MM = 65.0
 WHEEL_CIRC    = math.pi * WHEEL_DIAM_MM        # 204.2 mm
-MM_PER_PULSE  = WHEEL_CIRC / PPR               # 0.308 mm/pulse
+MM_PER_PULSE  = WHEEL_CIRC / PPR               # ~0.154 mm/pulse (BOTH_EDGES)
 WHEELBASE_MM  = 300.0
 
 ROOM_MM     = 2000.0
 CORRIDOR_MM = 400.0
 NUM_PASSES  = int(ROOM_MM / CORRIDOR_MM)       # 5 couloirs
 
-PUL_STRAIGHT = int(ROOM_MM     / MM_PER_PULSE) # ~6 497
-PUL_SHIFT    = int(CORRIDOR_MM / MM_PER_PULSE) # ~1 299
-PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # ~765
+PUL_STRAIGHT = int(ROOM_MM     / MM_PER_PULSE) # ~12 987
+PUL_SHIFT    = int(CORRIDOR_MM / MM_PER_PULSE) # ~2 597
+PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # ~1 530
 
 SPEED_FWD  = 35  # % ligne droite
 SPEED_TURN = 28   # % pivot
+# CANAUX_G (ch 3,5,4) drives physically LEFT wheel; CANAUX_D (ch 6,7,8) drives RIGHT (faster).
+# Trim is applied to motor D to slow the right wheel down to match the left.
+SPEED_TRIM_D = 0.85   # applied to motor D (right/faster); tune down if right still faster
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  POSITIONS BINS  (en mm, origine = départ robot)
@@ -60,9 +63,6 @@ BIN_POSITIONS = {
 # ═══════════════════════════════════════════════════════════════════════════════
 #  MATÉRIEL
 # ═══════════════════════════════════════════════════════════════════════════════
-ENC_G_A, ENC_G_B = 11, 13     # GPIO BOARD — encodeur gauche
-ENC_D_A, ENC_D_B = 15, 16     # GPIO BOARD — encodeur droit
-
 PCA9685_ADDR = 0x40
 CANAUX_G     = (3, 5, 4)       # ENA, IN2, IN1  (gauche monté en miroir)
 CANAUX_D     = (6, 7, 8)       # ENB, IN3, IN4
@@ -114,19 +114,7 @@ class NavigationNode(Node):
         self._pca_init()
         self.get_logger().info(f"PCA9685 sur bus I²C {n}")
 
-        # ── GPIO encodeurs ────────────────────────────────────────────────────
-        GPIO.setmode(GPIO.BOARD)
-        for p in [ENC_G_A, ENC_G_B, ENC_D_A, ENC_D_B]:
-            GPIO.setup(p, GPIO.IN)
-        GPIO.add_event_detect(ENC_G_A, GPIO.RISING, callback=self._cb_enc_g)
-        GPIO.add_event_detect(ENC_D_A, GPIO.RISING, callback=self._cb_enc_d)
-
-        # ── Compteurs encodeurs ───────────────────────────────────────────────
-        self._lock   = threading.Lock()
-        self._sm_g   = 0    # state-machine : absolu, reset par état
-        self._sm_d   = 0
-        self._odo_g  = 0    # odométrie    : signé, jamais reset
-        self._odo_d  = 0
+        # ── Compteurs odométrie (delta par rapport au dernier _update_pose) ──
         self._last_og = 0
         self._last_od = 0
 
@@ -168,37 +156,23 @@ class NavigationNode(Node):
         )
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  ENCODEURS
+    #  ENCODEURS  (libgpiod — 0 perte d'impulsion)
     # ─────────────────────────────────────────────────────────────────────────
 
-    def _cb_enc_g(self, _):
-        B = GPIO.input(ENC_G_B)
-        with self._lock:
-            self._sm_g  += 1
-            self._odo_g += 1 if B == GPIO.LOW else -1
-
-    def _cb_enc_d(self, _):
-        B = GPIO.input(ENC_D_B)
-        with self._lock:
-            self._sm_d  += 1
-            self._odo_d += 1 if B == GPIO.HIGH else -1   # miroir
-
     def _get_sm(self):
-        with self._lock:
-            return self._sm_g, self._sm_d
+        return enc_G.get_abs(), enc_D.get_abs()
 
     def _reset_sm(self):
-        with self._lock:
-            self._sm_g = 0
-            self._sm_d = 0
+        enc_G.reset_abs()
+        enc_D.reset_abs()
 
     # ─────────────────────────────────────────────────────────────────────────
     #  ODOMÉTRIE DIFFÉRENTIELLE
     # ─────────────────────────────────────────────────────────────────────────
 
     def _update_pose(self):
-        with self._lock:
-            og, od = self._odo_g, self._odo_d
+        og = enc_G.get_odo()
+        od = enc_D.get_odo()
 
         dg = (og - self._last_og) * MM_PER_PULSE
         dd = (od - self._last_od) * MM_PER_PULSE
@@ -246,15 +220,16 @@ class NavigationNode(Node):
         self._saved_y       = self._y
         self._saved_θ       = self._θ
         self._saved_serp_st = self._state
-        with self._lock:
-            self._saved_sm_g = self._sm_g
-            self._saved_sm_d = self._sm_d
-
         bx, by = BIN_POSITIONS.get(waste_class, BIN_POSITIONS['Other'])
         self._bin_tx = bx
         self._bin_ty = by
 
         self._stop()
+
+        # Sauvegarde du compteur SM avant reset (pour reprise après bin trip)
+        self._saved_sm_g = enc_G.get_abs()
+        self._saved_sm_d = enc_D.get_abs()
+
         self._reset_sm()
         self._begin_turn_to(bx, by)
         self._state = self.ST_TURN_TO_BIN
@@ -294,9 +269,8 @@ class NavigationNode(Node):
     def _finish_bin_trip(self):
         """Reprend le serpentin exactement là où il en était."""
         self._state = self._saved_serp_st
-        with self._lock:
-            self._sm_g = self._saved_sm_g
-            self._sm_d = self._saved_sm_d
+        enc_G.set_abs(self._saved_sm_g)
+        enc_D.set_abs(self._saved_sm_d)
 
         if self._state in (self.ST_FORWARD, self.ST_SHIFT):
             self._avancer()
@@ -435,6 +409,8 @@ class NavigationNode(Node):
         self._moteur('D', 0)
 
     def _moteur(self, cote, vitesse):
+        if cote == 'D' and vitesse != 0:   # D motor is physically the right (faster) wheel
+            vitesse *= SPEED_TRIM_D
         pwm = int(abs(vitesse) / 100 * 4095)
         ch_en, ch_a, ch_b = CANAUX_G if cote == 'G' else CANAUX_D
         if vitesse > 0:
@@ -477,8 +453,9 @@ class NavigationNode(Node):
 
     def destroy_node(self):
         self._stop()
+        enc_G.stop()
+        enc_D.stop()
         self.bus.close()
-        GPIO.cleanup()
         super().destroy_node()
 
 

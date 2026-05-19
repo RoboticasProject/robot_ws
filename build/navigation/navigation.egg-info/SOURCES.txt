@@ -9,8 +9,13 @@ setup.py
 ../../build/navigation/navigation.egg-info/top_level.txt
 ../../build/navigation/navigation.egg-info/zip-safe
 navigation/__init__.py
+navigation/encoder_reader.py
 navigation/motor_node.py
 navigation/navigation_node.py
+navigation/scan_gpio.py
+navigation/test_calibration.py
+navigation/test_motors.py
+navigation/test_sync.py
 resource/navigation
 test/test_copyright.py
 test/test_flake8.py

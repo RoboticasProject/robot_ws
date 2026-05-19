@@ -1,7 +1,8 @@
-pour launcer la navigation et la detection des déchets :
+*******pour launcer la navigation et la detection des déchets :*******
 source /home/afro-robotics/robot_ws/install/setup.bash
 ros2 launch image_acquisition image_acquisition.launch.py
 
+*******POUR SE CONECTER AVEC JETSON AVEC UN WINDOWS :*******
 
 ssh afro-robotics@10.12.44.113
 tmux new -s robot
