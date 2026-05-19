@@ -32,7 +32,7 @@ def generate_launch_description():
     )
     speed_arg = DeclareLaunchArgument(
         'speed',
-        default_value='60',
+        default_value='25',
         description='Cruise speed in % (0-100)'
     )
 

@@ -29,7 +29,7 @@ CANAUX_G     = (3, 5, 4)   # ENA, IN2, IN1  — moteur gauche (monté en miroir)
 CANAUX_D     = (6, 7, 8)   # ENB, IN3, IN4  — moteur droit
 
 # ── Vitesses de sortie fuzzy (singletons, en %) ───────────────────────────────
-SPEED_CRUISE = 60    # vitesse de croisière — aucune détection
+SPEED_CRUISE = 25    # vitesse de croisière — aucune détection (arène 2×2 m)
 SPEED_MEDIUM = 35    # approche prudente
 SPEED_SLOW   = 15    # objet assez proche
 SPEED_STOP   = 0     # objet très proche / haute confiance
@@ -88,7 +88,7 @@ class MotorNode(Node):
     def __init__(self):
         super().__init__('motor_node')
 
-        self.declare_parameter('speed', SPEED_CRUISE)
+        self.declare_parameter('speed', SPEED_CRUISE)  # overridable from launch
         self.speed = self.get_parameter('speed').value   # vitesse croisière
 
         bus_num = _detect_i2c_bus()
