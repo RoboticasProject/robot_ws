@@ -47,7 +47,14 @@ SPEED_FWD  = 35  # % ligne droite
 SPEED_TURN = 28   # % pivot
 # CANAUX_G (ch 3,5,4) drives physically LEFT wheel; CANAUX_D (ch 6,7,8) drives RIGHT (faster).
 # Trim is applied to motor D to slow the right wheel down to match the left.
-SPEED_TRIM_D = 0.85   # applied to motor D (right/faster); tune down if right still faster
+SPEED_TRIM_D = 0.861  # calibrated from test_sync.py (avg of 2 runs); fuzzy handles residual
+
+# ── Fuzzy wheel-sync corrector — integral on D only, G is never modified ──────
+SYNC_ZERO_THRESH  = 1                  # 1 pulse/50ms noise floor  (was 2/100ms)
+SYNC_SMALL_THRESH = 4                  # boundary small/large zone (was 8/100ms)
+SYNC_STEP_MAX     = int(4095 * 0.008)  # 32 PWM/50ms — same correction rate as 61/100ms
+SYNC_DRIFT_MAX    = int(4095 * 0.10)   # 409 PWM — tighter limit, prevents runaway (was 20%)
+SYNC_POS_WEIGHT   = 30                 # position drift scaled down more to reduce windup
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  POSITIONS BINS  (en mm, origine = départ robot)
@@ -100,7 +107,8 @@ class NavigationNode(Node):
     ST_GO_HOME      = 'GO_HOME'
     ST_REORIENT     = 'REORIENT'
 
-    SERP_STATES = {ST_FORWARD, ST_TURN1, ST_SHIFT, ST_TURN2}
+    SERP_STATES         = {ST_FORWARD, ST_TURN1, ST_SHIFT, ST_TURN2}
+    STRAIGHT_SYNC_STATES = {ST_FORWARD, ST_SHIFT, ST_GO_TO_BIN, ST_GO_HOME}
 
     def __init__(self):
         super().__init__('navigation_node')
@@ -117,6 +125,13 @@ class NavigationNode(Node):
         # ── Compteurs odométrie (delta par rapport au dernier _update_pose) ──
         self._last_og = 0
         self._last_od = 0
+
+        # ── Fuzzy wheel-sync state ────────────────────────────────────────────
+        self._base_pwm_g     = 0   # last EN PWM sent to left motor  (set by _moteur)
+        self._base_pwm_d     = 0   # last EN PWM sent to right motor (set by _moteur)
+        self._cur_pwm_d      = 0   # D's current corrected PWM — integral accumulator
+        self._sync_ref_abs_g = enc_G.get_abs()
+        self._sync_ref_abs_d = enc_D.get_abs()
 
         # ── Pose (mm, rad) ────────────────────────────────────────────────────
         self._x = 0.0
@@ -148,6 +163,7 @@ class NavigationNode(Node):
             Detection2DArray, '/detections', self._cb_detection, 10
         )
         self.create_timer(0.05, self._loop)
+        self.create_timer(0.05, self._sync_loop)
 
         self.get_logger().info(
             f"Navigation 2×2 m démarrée — {NUM_PASSES} couloirs × {ROOM_MM/1000:.0f} m\n"
@@ -393,8 +409,11 @@ class NavigationNode(Node):
     # ─────────────────────────────────────────────────────────────────────────
 
     def _avancer(self):
-        self._moteur('G',  SPEED_FWD)
-        self._moteur('D',  SPEED_FWD)
+        self._moteur('G', SPEED_FWD)
+        self._moteur('D', SPEED_FWD)
+        self._cur_pwm_d      = self._base_pwm_d   # reset D integral on new motion command
+        self._sync_ref_abs_g = enc_G.get_abs()
+        self._sync_ref_abs_d = enc_D.get_abs()
 
     def _pivoter(self, direction):
         if direction == 'L':
@@ -424,6 +443,60 @@ class NavigationNode(Node):
             self._pca_canal(ch_b, 0)
             pwm = 0
         self._pca_canal(ch_en, pwm)
+        if cote == 'G':
+            self._base_pwm_g = pwm
+        else:
+            self._base_pwm_d = pwm
+
+    # ─────────────────────────────────────────────────────────────────────────
+    #  FUZZY WHEEL SYNC  (10 Hz timer)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def _fuzzy_sync_delta(self, diff: int) -> int:
+        """Manual fuzzy corrector.
+        diff = pulses_G - pulses_D over the last 100ms window.
+        Positive → G faster, D lagging → increase D.
+        Negative → D faster → decrease D.
+        Returns signed step to ADD to D's current PWM."""
+        abs_diff = abs(diff)
+        if abs_diff <= SYNC_ZERO_THRESH:
+            return 0
+        sign = 1 if diff > 0 else -1
+        if abs_diff <= SYNC_SMALL_THRESH:
+            t = (abs_diff - SYNC_ZERO_THRESH) / (SYNC_SMALL_THRESH - SYNC_ZERO_THRESH)
+            delta = int(t * SYNC_STEP_MAX * 0.5)
+        else:
+            t = min(1.0, (abs_diff - SYNC_SMALL_THRESH) / SYNC_SMALL_THRESH)
+            delta = int(SYNC_STEP_MAX * 0.5 + t * SYNC_STEP_MAX * 0.5)
+        return sign * delta
+
+    def _sync_loop(self):
+        cur_abs_g = enc_G.get_abs()
+        cur_abs_d = enc_D.get_abs()
+
+        stalled = (cur_abs_g == self._sync_ref_abs_g and cur_abs_d == self._sync_ref_abs_d)
+        vel_diff = (cur_abs_g - self._sync_ref_abs_g) - (cur_abs_d - self._sync_ref_abs_d)
+        self._sync_ref_abs_g = cur_abs_g
+        self._sync_ref_abs_d = cur_abs_d
+
+        if stalled or self._state not in self.STRAIGHT_SYNC_STATES or self._base_pwm_d == 0:
+            return
+
+        pos_diff  = cur_abs_g - cur_abs_d              # cumulative drift since last reset_abs
+        diff      = vel_diff + pos_diff // SYNC_POS_WEIGHT
+        delta     = self._fuzzy_sync_delta(diff)
+        if delta == 0:
+            return
+
+        new_d = self._cur_pwm_d + delta
+        new_d = max(self._base_pwm_d - SYNC_DRIFT_MAX, min(self._base_pwm_d + SYNC_DRIFT_MAX, new_d))
+        new_d = max(0, min(4095, new_d))
+        self._cur_pwm_d = new_d
+        self._pca_canal(CANAUX_D[0], new_d)
+        self.get_logger().debug(
+            f"[SYNC] vel={vel_diff:+d} pos={pos_diff:+d} comb={diff:+d} "
+            f"delta={delta:+d} D={new_d}"
+        )
 
     # ─────────────────────────────────────────────────────────────────────────
     #  PCA9685 bas niveau
