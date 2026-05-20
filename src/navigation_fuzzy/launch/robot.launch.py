@@ -22,7 +22,7 @@ def generate_launch_description():
     )
     camera_device_arg = DeclareLaunchArgument(
         'camera_device',
-        default_value='/dev/video1',
+        default_value='/dev/video0',
         description='USB camera device path'
     )
     conf_arg = DeclareLaunchArgument(

@@ -25,7 +25,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'motor_node      = navigation.motor_node:main',
+            'encoder_node    = navigation.encoder_node:main',
             'navigation_node = navigation.navigation_node:main',
         ],
     },

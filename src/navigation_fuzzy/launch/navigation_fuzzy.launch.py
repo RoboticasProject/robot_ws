@@ -31,7 +31,7 @@ def generate_launch_description():
         description='YOLO minimum confidence to publish a detection'
     )
 
-    # ── GPU library path (required for TensorRT on Jetson) ────────────────────
+    # ── GPU library path (TensorRT on Jetson) ─────────────────────────────────
     ld_lib_path = SetEnvironmentVariable(
         'LD_LIBRARY_PATH',
         CUSPARSELT_LIB + ':' + os.environ.get('LD_LIBRARY_PATH', '')
@@ -39,7 +39,7 @@ def generate_launch_description():
 
     # ── Encoder node — owns GPIO, publishes /wheel_encoders at 50 Hz ──────────
     encoder_node = Node(
-        package='navigation',
+        package='navigation_fuzzy',
         executable='encoder_node',
         name='encoder_node',
         output='screen'
@@ -74,11 +74,11 @@ def generate_launch_description():
         output='screen'
     )
 
-    # ── Navigation node — subscribes /wheel_encoders + /detections ────────────
-    navigation_node = Node(
-        package='navigation',
-        executable='navigation_node',
-        name='navigation_node',
+    # ── Navigation fuzzy node — straight line + both fuzzy layers ─────────────
+    navigation_fuzzy_node = Node(
+        package='navigation_fuzzy',
+        executable='navigation_fuzzy_node',
+        name='navigation_fuzzy_node',
         output='screen'
     )
 
@@ -91,5 +91,5 @@ def generate_launch_description():
         encoder_node,
         camera_node,
         yolo_node,
-        navigation_node,
+        navigation_fuzzy_node,
     ])

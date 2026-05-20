@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-navigation_node.py — Serpentin 2×2 m + navigation vers 4 bins par type de déchet
+navigation_node.py — Serpentine 2×2 m + navigation vers 4 bins par type de déchet
 
 Machine à états
 ───────────────
@@ -13,6 +13,18 @@ Bins (coins de la salle 2×2 m, robot démarre en (0,0) face +X)
   Metal   → (1.8, 0.2) m   bas-droit
   Glass   → (1.8, 1.8) m   haut-droit
   Paper   → (0.2, 1.8) m   haut-gauche
+
+Fuzzy logics (cascade, aucun override)
+────────────────────────────────────────
+Layer 1 — Speed fuzzy : YOLO confidence × bbox area → _cruise_speed (0 → SPEED_FWD)
+           Si speed ≤ BIN_TRIP_SPEED → déclenche bin trip (objet proche/certain)
+           Sinon → ralentit le serpentin, garde le cap
+
+Layer 2 — Sync fuzzy  : drift encodeur G/D → correction PWM moteur D
+           Fonctionne à toute vitesse ; s'ancre sur la base PWM courante.
+
+Encodeurs reçus via /wheel_encoders (encoder_node). Ce nœud ne touche
+pas aux GPIO — encoder_node est l'unique propriétaire des lignes libgpiod.
 """
 
 import math
@@ -20,59 +32,89 @@ import time
 
 import rclpy
 from rclpy.node import Node
+from std_msgs.msg import Int64MultiArray
 from vision_msgs.msg import Detection2DArray
 import smbus2
 
-from .encoder_reader import enc_G, enc_D, PPR_EFFECTIF
-
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  GÉOMÉTRIE ROBOT
+#  ENCODEUR  (keep in sync with encoder_reader.PPR_EFFECTIF)
 # ═══════════════════════════════════════════════════════════════════════════════
-PPR           = PPR_EFFECTIF   # 1326 pulses/tour (libgpiod BOTH_EDGES)
+PPR_EFFECTIF  = 633
+PPR           = PPR_EFFECTIF
 WHEEL_DIAM_MM = 65.0
-WHEEL_CIRC    = math.pi * WHEEL_DIAM_MM        # 204.2 mm
-MM_PER_PULSE  = WHEEL_CIRC / PPR               # ~0.154 mm/pulse (BOTH_EDGES)
+WHEEL_CIRC    = math.pi * WHEEL_DIAM_MM
+MM_PER_PULSE  = WHEEL_CIRC / PPR
 WHEELBASE_MM  = 300.0
 
+# ═══════════════════════════════════════════════════════════════════════════════
+#  GÉOMÉTRIE SERPENTINE
+# ═══════════════════════════════════════════════════════════════════════════════
 ROOM_MM     = 2000.0
 CORRIDOR_MM = 400.0
-NUM_PASSES  = int(ROOM_MM / CORRIDOR_MM)       # 5 couloirs
+NUM_PASSES  = int(ROOM_MM / CORRIDOR_MM)
 
-PUL_STRAIGHT = int(ROOM_MM     / MM_PER_PULSE) # ~12 987
-PUL_SHIFT    = int(CORRIDOR_MM / MM_PER_PULSE) # ~2 597
-PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # ~1 530
-
-SPEED_FWD  = 35  # % ligne droite
-SPEED_TURN = 28   # % pivot
-# CANAUX_G (ch 3,5,4) drives physically LEFT wheel; CANAUX_D (ch 6,7,8) drives RIGHT (faster).
-# Trim is applied to motor D to slow the right wheel down to match the left.
-SPEED_TRIM_D = 0.861  # calibrated from test_sync.py (avg of 2 runs); fuzzy handles residual
-
-# ── Fuzzy wheel-sync corrector — integral on D only, G is never modified ──────
-SYNC_ZERO_THRESH  = 1                  # 1 pulse/50ms noise floor  (was 2/100ms)
-SYNC_SMALL_THRESH = 4                  # boundary small/large zone (was 8/100ms)
-SYNC_STEP_MAX     = int(4095 * 0.008)  # 32 PWM/50ms — same correction rate as 61/100ms
-SYNC_DRIFT_MAX    = int(4095 * 0.10)   # 409 PWM — tighter limit, prevents runaway (was 20%)
-SYNC_POS_WEIGHT   = 30                 # position drift scaled down more to reduce windup
+PUL_STRAIGHT = int(ROOM_MM     / MM_PER_PULSE)
+PUL_SHIFT    = int(CORRIDOR_MM / MM_PER_PULSE)
+PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  POSITIONS BINS  (en mm, origine = départ robot)
+#  MOTEURS
+# ═══════════════════════════════════════════════════════════════════════════════
+SPEED_FWD    = 35
+SPEED_TURN   = 28
+SPEED_TRIM_D = 0.861   # right wheel is physically faster; calibrated by test_sync.py
+
+# ── Layer 2 — Fuzzy wheel-sync ────────────────────────────────────────────────
+SYNC_ZERO_THRESH  = 1                  # pulse/window noise floor
+SYNC_SMALL_THRESH = 4                  # boundary small/large error zone
+SYNC_STEP_MAX     = int(4095 * 0.008)  # 32 PWM per 50 ms window
+SYNC_DRIFT_MAX    = int(4095 * 0.10)   # ±409 PWM max correction from base
+SYNC_POS_WEIGHT   = 30                 # position drift weight vs velocity
+
+# ── Layer 1 — Fuzzy speed ─────────────────────────────────────────────────────
+_SPD_STOP        = 0
+_SPD_SLOW        = 15
+_SPD_MEDIUM      = 25
+# FAST singleton = SPEED_FWD (35 %)
+_AREA_SMALL      = 20_000   # px²  — object far
+_AREA_MEDIUM     = 60_000   # px²  — object mid-range
+_AREA_FRAME      = 640 * 480
+BIN_TRIP_SPEED   = 5.0      # fuzzy output ≤ this % → trigger bin trip
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  BINS
 # ═══════════════════════════════════════════════════════════════════════════════
 BIN_POSITIONS = {
-    'Plastic': ( 200.0,  200.0),   # coin bas-gauche
-    'Metal':   (1800.0,  200.0),   # coin bas-droit
-    'Glass':   (1800.0, 1800.0),   # coin haut-droit
-    'Paper':   ( 200.0, 1800.0),   # coin haut-gauche
-    'Other':   ( 200.0, 1800.0),   # même que Paper
+    'Plastic': ( 200.0,  200.0),
+    'Metal':   (1800.0,  200.0),
+    'Glass':   (1800.0, 1800.0),
+    'Paper':   ( 200.0, 1800.0),
+    'Other':   ( 200.0, 1800.0),
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  MATÉRIEL
 # ═══════════════════════════════════════════════════════════════════════════════
 PCA9685_ADDR = 0x40
-CANAUX_G     = (3, 5, 4)       # ENA, IN2, IN1  (gauche monté en miroir)
-CANAUX_D     = (6, 7, 8)       # ENB, IN3, IN4
+CANAUX_G     = (3, 5, 4)   # ENA, IN2, IN1 — gauche (monté en miroir)
+CANAUX_D     = (6, 7, 8)   # ENB, IN3, IN4 — droit
+
+
+# ── Fuzzy membership functions ────────────────────────────────────────────────
+
+def _trap(x, a, b, c, d):
+    if x <= a or x >= d:
+        return 0.0
+    if x <= b:
+        return (x - a) / (b - a)
+    if x <= c:
+        return 1.0
+    return (d - x) / (d - c)
+
+
+def _tri(x, a, b, c):
+    return _trap(x, a, b, b, c)
 
 
 def _find_i2c(addr=PCA9685_ADDR):
@@ -107,7 +149,7 @@ class NavigationNode(Node):
     ST_GO_HOME      = 'GO_HOME'
     ST_REORIENT     = 'REORIENT'
 
-    SERP_STATES         = {ST_FORWARD, ST_TURN1, ST_SHIFT, ST_TURN2}
+    SERP_STATES          = {ST_FORWARD, ST_TURN1, ST_SHIFT, ST_TURN2}
     STRAIGHT_SYNC_STATES = {ST_FORWARD, ST_SHIFT, ST_GO_TO_BIN, ST_GO_HOME}
 
     def __init__(self):
@@ -122,28 +164,40 @@ class NavigationNode(Node):
         self._pca_init()
         self.get_logger().info(f"PCA9685 sur bus I²C {n}")
 
-        # ── Compteurs odométrie (delta par rapport au dernier _update_pose) ──
+        # ── Encoder data (received from /wheel_encoders) ──────────────────────
+        self._enc_ready     = False
+        self._enc_left_raw  = 0   # always-increasing raw count from encoder_node
+        self._enc_right_raw = 0
+        self._enc_left_odo  = 0   # signed cumulative (for odometry)
+        self._enc_right_odo = 0
+        self._seg_base_l    = 0   # snapshot at last _reset_sm()
+        self._seg_base_r    = 0
+
+        # ── Odométrie ─────────────────────────────────────────────────────────
         self._last_og = 0
         self._last_od = 0
 
-        # ── Fuzzy wheel-sync state ────────────────────────────────────────────
-        self._base_pwm_g     = 0   # last EN PWM sent to left motor  (set by _moteur)
-        self._base_pwm_d     = 0   # last EN PWM sent to right motor (set by _moteur)
-        self._cur_pwm_d      = 0   # D's current corrected PWM — integral accumulator
-        self._sync_ref_abs_g = enc_G.get_abs()
-        self._sync_ref_abs_d = enc_D.get_abs()
+        # ── Layer 2 — Fuzzy wheel-sync state ──────────────────────────────────
+        self._base_pwm_g     = 0
+        self._base_pwm_d     = 0
+        self._cur_pwm_d      = 0   # D's corrected PWM — integral accumulator
+        self._sync_ref_abs_g = 0
+        self._sync_ref_abs_d = 0
+
+        # ── Layer 1 — Fuzzy speed state ───────────────────────────────────────
+        self._cruise_speed = SPEED_FWD   # updated by _cb_detection via _fuzzy_speed
 
         # ── Pose (mm, rad) ────────────────────────────────────────────────────
         self._x = 0.0
         self._y = 0.0
-        self._θ = 0.0   # 0 = face +X
+        self._θ = 0.0
 
         # ── Serpentine ────────────────────────────────────────────────────────
         self._state    = self.ST_FORWARD
         self._pass_num = 0
-        self._turn_dir = 'L'   # alterne L / R à chaque couloir
+        self._turn_dir = 'L'
 
-        # ── Variables bin trip ────────────────────────────────────────────────
+        # ── Bin trip ──────────────────────────────────────────────────────────
         self._saved_x       = 0.0
         self._saved_y       = 0.0
         self._saved_θ       = 0.0
@@ -160,35 +214,63 @@ class NavigationNode(Node):
         # ── ROS ───────────────────────────────────────────────────────────────
         self._camera_ready = False
         self.create_subscription(
+            Int64MultiArray, '/wheel_encoders', self._cb_encoders, 10
+        )
+        self.create_subscription(
             Detection2DArray, '/detections', self._cb_detection, 10
         )
         self.create_timer(0.05, self._loop)
         self.create_timer(0.05, self._sync_loop)
 
         self.get_logger().info(
-            f"Navigation 2×2 m démarrée — {NUM_PASSES} couloirs × {ROOM_MM/1000:.0f} m\n"
+            f"Navigation 2×2 m — {NUM_PASSES} couloirs × {ROOM_MM/1000:.0f} m\n"
             f"  STRAIGHT={PUL_STRAIGHT} pul  SHIFT={PUL_SHIFT} pul  TURN90={PUL_TURN90} pul\n"
-            f"  En attente de la caméra..."
+            f"  En attente caméra + encodeurs..."
         )
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  ENCODEURS  (libgpiod — 0 perte d'impulsion)
+    #  ENCODEURS  (données reçues depuis encoder_node via /wheel_encoders)
     # ─────────────────────────────────────────────────────────────────────────
 
+    def _cb_encoders(self, msg: Int64MultiArray):
+        self._enc_left_raw  = msg.data[0]
+        self._enc_right_raw = msg.data[1]
+        self._enc_left_odo  = msg.data[2]
+        self._enc_right_odo = msg.data[3]
+        if not self._enc_ready:
+            self._enc_ready      = True
+            self._seg_base_l     = self._enc_left_raw
+            self._seg_base_r     = self._enc_right_raw
+            self._sync_ref_abs_g = 0
+            self._sync_ref_abs_d = 0
+
+    def _seg_l(self) -> int:
+        """Pulses since last _reset_sm() — left wheel."""
+        return self._enc_left_raw - self._seg_base_l
+
+    def _seg_r(self) -> int:
+        """Pulses since last _reset_sm() — right wheel."""
+        return self._enc_right_raw - self._seg_base_r
+
     def _get_sm(self):
-        return enc_G.get_abs(), enc_D.get_abs()
+        return self._seg_l(), self._seg_r()
 
     def _reset_sm(self):
-        enc_G.reset_abs()
-        enc_D.reset_abs()
+        self._seg_base_l = self._enc_left_raw
+        self._seg_base_r = self._enc_right_raw
+
+    def _set_sm(self, val_l: int, val_r: int):
+        """Restore segment counters to previously saved values (bin trip resume)."""
+        self._seg_base_l = self._enc_left_raw - val_l
+        self._seg_base_r = self._enc_right_raw - val_r
 
     # ─────────────────────────────────────────────────────────────────────────
     #  ODOMÉTRIE DIFFÉRENTIELLE
     # ─────────────────────────────────────────────────────────────────────────
 
     def _update_pose(self):
-        og = enc_G.get_odo()
-        od = enc_D.get_odo()
+        og = self._enc_left_odo
+        od = self._enc_right_odo
 
         dg = (og - self._last_og) * MM_PER_PULSE
         dd = (od - self._last_od) * MM_PER_PULSE
@@ -202,7 +284,44 @@ class NavigationNode(Node):
         self._x += d * math.cos(self._θ)
         self._y += d * math.sin(self._θ)
         self._θ += dθ / 2.0
-        self._θ  = math.atan2(math.sin(self._θ), math.cos(self._θ))   # normalise
+        self._θ  = math.atan2(math.sin(self._θ), math.cos(self._θ))
+
+    # ─────────────────────────────────────────────────────────────────────────
+    #  LAYER 1 — FUZZY SPEED
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def _fuzzy_speed(self, conf: float, area: float) -> float:
+        """
+        Mamdani fuzzy controller — confidence × bbox area → speed %.
+        Output in [0, SPEED_FWD]. Values ≤ BIN_TRIP_SPEED trigger a bin trip.
+        """
+        # Confidence membership
+        low_c  = _trap(conf, 0.0, 0.0, 0.50, 0.70)
+        med_c  = _tri( conf, 0.50, 0.70, 0.90)
+        high_c = _trap(conf, 0.70, 0.90, 1.0,  1.0)
+
+        # Area membership
+        small_a = _trap(area, 0,           0,            _AREA_SMALL,  _AREA_MEDIUM)
+        med_a   = _tri( area, _AREA_SMALL,  _AREA_MEDIUM, _AREA_FRAME // 2)
+        large_a = _trap(area, _AREA_MEDIUM, _AREA_FRAME // 2, _AREA_FRAME, _AREA_FRAME)
+
+        # Rules (Mamdani — min operator)
+        w_stop   = min(high_c, large_a)
+        w_slow   = max(min(high_c, med_a),   min(med_c, large_a))
+        w_medium = max(min(high_c, small_a), min(med_c, med_a))
+        w_fast   = max(min(med_c, small_a),  low_c)
+
+        # Defuzzification — weighted average of singletons
+        total = w_stop + w_slow + w_medium + w_fast
+        if total < 1e-6:
+            return float(SPEED_FWD)
+
+        return (
+            w_stop   * _SPD_STOP   +
+            w_slow   * _SPD_SLOW   +
+            w_medium * _SPD_MEDIUM +
+            w_fast   * SPEED_FWD
+        ) / total
 
     # ─────────────────────────────────────────────────────────────────────────
     #  DÉTECTION YOLO
@@ -215,23 +334,41 @@ class NavigationNode(Node):
             if not msg.detections:
                 self._avancer()
 
-        # Déclenchement uniquement pendant la phase serpentine
-        if not msg.detections or self._state not in self.SERP_STATES:
+        if self._state not in self.SERP_STATES:
+            return
+
+        if not msg.detections:
+            if self._cruise_speed != SPEED_FWD:
+                self._set_cruise(SPEED_FWD)
             return
 
         best = max(
             msg.detections,
             key=lambda d: d.results[0].hypothesis.score if d.results else 0.0
         )
-        waste_class = best.results[0].hypothesis.class_id if best.results else 'Other'
-        self._start_bin_trip(waste_class)
+        conf  = best.results[0].hypothesis.score if best.results else 0.0
+        area  = best.bbox.size_x * best.bbox.size_y
+        speed = self._fuzzy_speed(conf, area)
+        label = best.results[0].hypothesis.class_id if best.results else 'Other'
+
+        if speed <= BIN_TRIP_SPEED:
+            self.get_logger().info(
+                f"[SPEED] {label}  conf={conf:.2f}  area={int(area)}px²"
+                f"  speed={speed:.1f}% → BIN TRIP"
+            )
+            self._start_bin_trip(label)
+        elif self._state in (self.ST_FORWARD, self.ST_SHIFT):
+            self._set_cruise(speed)
+            self.get_logger().info(
+                f"[SPEED] {label}  conf={conf:.2f}  area={int(area)}px²"
+                f"  → {speed:.1f}%"
+            )
 
     # ─────────────────────────────────────────────────────────────────────────
     #  BIN TRIP — déclenchement
     # ─────────────────────────────────────────────────────────────────────────
 
     def _start_bin_trip(self, waste_class):
-        # Sauvegarde de l'état serpentine courant
         self._saved_x       = self._x
         self._saved_y       = self._y
         self._saved_θ       = self._θ
@@ -241,11 +378,10 @@ class NavigationNode(Node):
         self._bin_ty = by
 
         self._stop()
+        self._cruise_speed = SPEED_FWD   # full speed during bin trip navigation
 
-        # Sauvegarde du compteur SM avant reset (pour reprise après bin trip)
-        self._saved_sm_g = enc_G.get_abs()
-        self._saved_sm_d = enc_D.get_abs()
-
+        self._saved_sm_g = self._seg_l()
+        self._saved_sm_d = self._seg_r()
         self._reset_sm()
         self._begin_turn_to(bx, by)
         self._state = self.ST_TURN_TO_BIN
@@ -260,9 +396,8 @@ class NavigationNode(Node):
     # ─────────────────────────────────────────────────────────────────────────
 
     def _begin_turn_to(self, tx, ty):
-        """Calcule le pivot vers (tx,ty) et démarre les moteurs."""
         dθ = math.atan2(ty - self._y, tx - self._x) - self._θ
-        dθ = math.atan2(math.sin(dθ), math.cos(dθ))   # normalise [-π, π]
+        dθ = math.atan2(math.sin(dθ), math.cos(dθ))
 
         arc = abs(dθ) * WHEELBASE_MM / 2.0
         self._bin_turn_pul  = int(arc / MM_PER_PULSE)
@@ -271,22 +406,19 @@ class NavigationNode(Node):
         if self._bin_turn_pul > 10:
             self._pivoter('L' if self._bin_turn_left else 'R')
         else:
-            self._bin_turn_pul = 0   # déjà aligné, pas de pivot
+            self._bin_turn_pul = 0
 
     def _begin_drive_to(self, tx, ty):
-        """Calcule la distance vers (tx,ty) et démarre les moteurs."""
         dist = math.sqrt((tx - self._x) ** 2 + (ty - self._y) ** 2)
         self._bin_drive_pul = int(dist / MM_PER_PULSE)
         if self._bin_drive_pul > 10:
             self._avancer()
         else:
-            self._bin_drive_pul = 0   # déjà sur place
+            self._bin_drive_pul = 0
 
     def _finish_bin_trip(self):
-        """Reprend le serpentin exactement là où il en était."""
         self._state = self._saved_serp_st
-        enc_G.set_abs(self._saved_sm_g)
-        enc_D.set_abs(self._saved_sm_d)
+        self._set_sm(self._saved_sm_g, self._saved_sm_d)
 
         if self._state in (self.ST_FORWARD, self.ST_SHIFT):
             self._avancer()
@@ -300,7 +432,7 @@ class NavigationNode(Node):
     # ─────────────────────────────────────────────────────────────────────────
 
     def _loop(self):
-        if not self._camera_ready:
+        if not self._camera_ready or not self._enc_ready:
             return
 
         self._update_pose()
@@ -387,7 +519,6 @@ class NavigationNode(Node):
             if self._bin_drive_pul == 0 or avg >= self._bin_drive_pul:
                 self._stop()
                 self._reset_sm()
-                # Pivot pour retrouver l'orientation sauvegardée
                 dθ = self._saved_θ - self._θ
                 dθ = math.atan2(math.sin(dθ), math.cos(dθ))
                 arc = abs(dθ) * WHEELBASE_MM / 2.0
@@ -405,15 +536,23 @@ class NavigationNode(Node):
                 self._finish_bin_trip()
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  COMMANDES MOTEURS
+    #  COMMANDES VITESSE
     # ─────────────────────────────────────────────────────────────────────────
 
+    def _set_cruise(self, speed: float):
+        """Apply a new cruise speed mid-motion; re-anchors sync integral to new base."""
+        self._cruise_speed = speed
+        if self._state in self.STRAIGHT_SYNC_STATES and self._base_pwm_d != 0:
+            self._moteur('G', speed)
+            self._moteur('D', speed)
+            self._cur_pwm_d = self._base_pwm_d   # re-anchor so sync works from new base
+
     def _avancer(self):
-        self._moteur('G', SPEED_FWD)
-        self._moteur('D', SPEED_FWD)
-        self._cur_pwm_d      = self._base_pwm_d   # reset D integral on new motion command
-        self._sync_ref_abs_g = enc_G.get_abs()
-        self._sync_ref_abs_d = enc_D.get_abs()
+        self._moteur('G', self._cruise_speed)
+        self._moteur('D', self._cruise_speed)
+        self._cur_pwm_d      = self._base_pwm_d
+        self._sync_ref_abs_g = self._seg_l()
+        self._sync_ref_abs_d = self._seg_r()
 
     def _pivoter(self, direction):
         if direction == 'L':
@@ -428,7 +567,7 @@ class NavigationNode(Node):
         self._moteur('D', 0)
 
     def _moteur(self, cote, vitesse):
-        if cote == 'D' and vitesse != 0:   # D motor is physically the right (faster) wheel
+        if cote == 'D' and vitesse != 0:
             vitesse *= SPEED_TRIM_D
         pwm = int(abs(vitesse) / 100 * 4095)
         ch_en, ch_a, ch_b = CANAUX_G if cote == 'G' else CANAUX_D
@@ -449,15 +588,15 @@ class NavigationNode(Node):
             self._base_pwm_d = pwm
 
     # ─────────────────────────────────────────────────────────────────────────
-    #  FUZZY WHEEL SYNC  (10 Hz timer)
+    #  LAYER 2 — FUZZY WHEEL SYNC  (20 Hz)
     # ─────────────────────────────────────────────────────────────────────────
 
     def _fuzzy_sync_delta(self, diff: int) -> int:
-        """Manual fuzzy corrector.
-        diff = pulses_G - pulses_D over the last 100ms window.
-        Positive → G faster, D lagging → increase D.
-        Negative → D faster → decrease D.
-        Returns signed step to ADD to D's current PWM."""
+        """
+        diff = (vel_G - vel_D) + position_drift_weight
+        Positive → G faster → increase D.
+        Returns signed PWM step to add to D's current value.
+        """
         abs_diff = abs(diff)
         if abs_diff <= SYNC_ZERO_THRESH:
             return 0
@@ -471,31 +610,37 @@ class NavigationNode(Node):
         return sign * delta
 
     def _sync_loop(self):
-        cur_abs_g = enc_G.get_abs()
-        cur_abs_d = enc_D.get_abs()
+        if not self._enc_ready:
+            return
 
-        stalled = (cur_abs_g == self._sync_ref_abs_g and cur_abs_d == self._sync_ref_abs_d)
-        vel_diff = (cur_abs_g - self._sync_ref_abs_g) - (cur_abs_d - self._sync_ref_abs_d)
+        cur_abs_g = self._seg_l()
+        cur_abs_d = self._seg_r()
+
+        stalled  = (cur_abs_g == self._sync_ref_abs_g and
+                    cur_abs_d == self._sync_ref_abs_d)
+        vel_diff = ((cur_abs_g - self._sync_ref_abs_g) -
+                    (cur_abs_d - self._sync_ref_abs_d))
         self._sync_ref_abs_g = cur_abs_g
         self._sync_ref_abs_d = cur_abs_d
 
         if stalled or self._state not in self.STRAIGHT_SYNC_STATES or self._base_pwm_d == 0:
             return
 
-        pos_diff  = cur_abs_g - cur_abs_d              # cumulative drift since last reset_abs
-        diff      = vel_diff + pos_diff // SYNC_POS_WEIGHT
-        delta     = self._fuzzy_sync_delta(diff)
+        pos_diff = cur_abs_g - cur_abs_d
+        diff     = vel_diff + pos_diff // SYNC_POS_WEIGHT
+        delta    = self._fuzzy_sync_delta(diff)
         if delta == 0:
             return
 
         new_d = self._cur_pwm_d + delta
-        new_d = max(self._base_pwm_d - SYNC_DRIFT_MAX, min(self._base_pwm_d + SYNC_DRIFT_MAX, new_d))
+        new_d = max(self._base_pwm_d - SYNC_DRIFT_MAX,
+                    min(self._base_pwm_d + SYNC_DRIFT_MAX, new_d))
         new_d = max(0, min(4095, new_d))
         self._cur_pwm_d = new_d
         self._pca_canal(CANAUX_D[0], new_d)
         self.get_logger().debug(
             f"[SYNC] vel={vel_diff:+d} pos={pos_diff:+d} comb={diff:+d} "
-            f"delta={delta:+d} D={new_d}"
+            f"delta={delta:+d} D={new_d} base={self._base_pwm_d}"
         )
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -526,8 +671,6 @@ class NavigationNode(Node):
 
     def destroy_node(self):
         self._stop()
-        enc_G.stop()
-        enc_D.stop()
         self.bus.close()
         super().destroy_node()
 

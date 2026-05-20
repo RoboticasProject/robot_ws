@@ -147,7 +147,15 @@ class YoloDetectionNode(Node):
         # ── MJPEG stream server on port 8080 ──────────────────────────────────
         server = HTTPServer(('0.0.0.0', 8080), _MJPEGHandler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
-        self.get_logger().info("MJPEG stream: http://10.12.44.113:8080")
+        import socket as _socket
+        try:
+            _s = _socket.socket(_socket.AF_INET, _socket.SOCK_DGRAM)
+            _s.connect(('8.8.8.8', 80))
+            _local_ip = _s.getsockname()[0]
+            _s.close()
+        except Exception:
+            _local_ip = '0.0.0.0'
+        self.get_logger().info(f"MJPEG stream: http://{_local_ip}:8080")
 
         self.get_logger().info("YoloDetectionNode ready — waiting for frames on /camera/image_raw")
 
