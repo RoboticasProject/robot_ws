@@ -5,7 +5,7 @@ navigation_line_node.py — Suivi de ligne caméra + détection de déchets → 
 Machine à états
 ───────────────
 Suivi ligne  : LINE_FOLLOWING   (braquage fuzzy caméra, vitesse modulée YOLO)
-Virage 90°   : UTURN_1 (90°) → LINE_FOLLOWING
+Transition   : UTURN_1 (90°) → UTURN_STRAIGHT (40 cm) → UTURN_2 (90°) → LINE_FOLLOWING
 Ramassage    : STOPPED_TRASH → TURN_TO_BIN → GO_TO_BIN → AT_BIN
                → TURN_TO_LINE → GO_TO_LINE → REORIENT → REACQUIRE
                                                               ↓
@@ -65,9 +65,9 @@ NUM_PASSES   = int(ROOM_MM / CORRIDOR_MM)            # 5
 
 PUL_STRAIGHT = int(ROOM_MM     / MM_PER_PULSE)       # ~6186 pul
 PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # ~731 pul  (90°)
-PUL_UTURN_STRAIGHT = int(200.0 / MM_PER_PULSE)   # 20 cm droit entre les deux 90°
+PUL_UTURN_STRAIGHT = int(CORRIDOR_MM / MM_PER_PULSE)  # 40 cm = largeur d'un couloir
 UTURN_TURN_TIMEOUT = 2.5   # s — fallback par pivot 90°
-UTURN_STR_TIMEOUT  = 3.0   # s — fallback segment droit 20 cm
+UTURN_STR_TIMEOUT  = 5.0   # s — fallback segment droit 40 cm
 
 # Temps minimum dans le couloir avant d'accepter "fin de couloir".
 # Remplace le check encodeur (MIN_PASS_PULSES) — robuste si encodeurs défaillants.
@@ -492,7 +492,7 @@ class NavigationLineNode(Node):
                 return
 
         # ══════════════════════════════════════════════════════════════════════
-        #  DEMI-TOUR SERPENTINE — 90° + 20 cm droit + 90°
+        #  TRANSITION DE COULOIR — 90° + 40 cm + 90°
         # ══════════════════════════════════════════════════════════════════════
 
         elif self._state == self.ST_UTURN_1:
@@ -502,7 +502,34 @@ class NavigationLineNode(Node):
             if mini >= PUL_TURN90 or t_uturn >= UTURN_TURN_TIMEOUT:
                 how = f"{mini}pul" if mini >= PUL_TURN90 else f"{t_uturn:.1f}s timeout"
                 self._stop()
+                self._uturn_start_t = now
+                self._reset_sm()
+                self._avancer(SPEED_FWD)
+                self._state = self.ST_UTURN_STRAIGHT
+                self.get_logger().info(f"UTURN_1 90° ({how}) → UTURN_STRAIGHT 40 cm")
+
+        elif self._state == self.ST_UTURN_STRAIGHT:
+            if self._uturn_start_t is None:
+                self._uturn_start_t = now
+            t_str = (now - self._uturn_start_t).nanoseconds / 1e9
+            if avg >= PUL_UTURN_STRAIGHT or t_str >= UTURN_STR_TIMEOUT:
+                how = f"{avg}pul" if avg >= PUL_UTURN_STRAIGHT else f"{t_str:.1f}s timeout"
+                self._stop()
+                self._uturn_start_t = now
+                self._reset_sm()
+                self._pivoter(self._turn_dir)
+                self._state = self.ST_UTURN_2
+                self.get_logger().info(f"UTURN_STRAIGHT 40 cm ({how}) → UTURN_2 90°")
+
+        elif self._state == self.ST_UTURN_2:
+            if self._uturn_start_t is None:
+                self._uturn_start_t = now
+            t_uturn = (now - self._uturn_start_t).nanoseconds / 1e9
+            if mini >= PUL_TURN90 or t_uturn >= UTURN_TURN_TIMEOUT:
+                how = f"{mini}pul" if mini >= PUL_TURN90 else f"{t_uturn:.1f}s timeout"
+                self._stop()
                 self._uturn_start_t  = None
+                self._turn_dir       = 'R' if self._turn_dir == 'L' else 'L'
                 self._reset_sm()
                 self._line_lost_t    = None
                 self._last_error     = 0.0
@@ -510,7 +537,7 @@ class NavigationLineNode(Node):
                 self._follow_start_t = now
                 self._state          = self.ST_LINE_FOLLOWING
                 self.get_logger().info(
-                    f"UTURN_1 90° ({how}) → LINE_FOLLOWING  couloir {self._pass_num}/{NUM_PASSES}"
+                    f"UTURN_2 90° ({how}) → LINE_FOLLOWING  couloir {self._pass_num}/{NUM_PASSES}"
                     f"  θ={math.degrees(self._θ):.0f}°"
                 )
 
