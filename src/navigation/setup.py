@@ -10,7 +10,10 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/robot.launch.py']),
+        ('share/' + package_name + '/launch', [
+            'launch/robot.launch.py',
+            'launch/robot_line.launch.py',
+        ]),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,8 +28,10 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'encoder_node    = navigation.encoder_node:main',
-            'navigation_node = navigation.navigation_node:main',
+            'encoder_node          = navigation.encoder_node:main',
+            'navigation_node       = navigation.navigation_node:main',
+            'line_follower_node    = navigation.line_follower_node:main',
+            'navigation_line_node  = navigation.navigation_line_node:main',
         ],
     },
 )

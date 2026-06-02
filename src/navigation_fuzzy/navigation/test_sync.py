@@ -32,11 +32,11 @@ WHEEL_DIAM_MM = 65.0
 WHEEL_CIRC    = math.pi * WHEEL_DIAM_MM
 MM_PER_PULSE  = WHEEL_CIRC / PPR_EFFECTIF
 SPEED_FWD     = 35
-SPEED_TRIM_D  = 0.842
-DURATION_SECS = 20.0
+SPEED_TRIM_D  = 0.861
+DURATION_SECS = 10.0
 
 # ── Fuzzy sync — identiques à navigation_node.py ─────────────────────────────
-SYNC_ZERO_THRESH  = 1             # 1 pulse/50ms noise floor  (was 2/100ms)
+SYNC_ZERO_THRESH  = 1                  # 1 pulse/50ms noise floor  (was 2/100ms)
 SYNC_SMALL_THRESH = 4                  # boundary small/large zone (was 8/100ms)
 SYNC_STEP_MAX     = int(4095 * 0.008)  # 32 PWM/50ms — same correction rate as 61/100ms
 SYNC_DRIFT_MAX    = int(4095 * 0.10)   # 409 PWM — tighter limit, prevents runaway (was 20%)

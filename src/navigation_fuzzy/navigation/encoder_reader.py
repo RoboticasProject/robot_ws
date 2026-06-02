@@ -24,12 +24,12 @@ import threading
 
 # ── DFRobot FIT0277 — 12V, 146 RPM max, Two-phase Hall encoder ──────────────
 PPR_MOTEUR       = 13
-RATIO_REDUCTEUR  = 56.9   # ratio réel mesuré (≠ 51 nominal)
-PPR_ROUE         = PPR_MOTEUR * RATIO_REDUCTEUR   # ~740 RISING seul
-# PPR_EFFECTIF mesuré à la main (3 runs, roue G : 1473/1479/1473 → ~1475).
-# Cohérent avec 13 PPR_moteur × 56.9 × 2 fronts = 1479.
-PPR_EFFECTIF     = 1475
-DEGRES_PAR_PULSE = 360.0 / PPR_EFFECTIF            # ~0.244 °/pulse
+RATIO_REDUCTEUR  = 51
+PPR_ROUE         = PPR_MOTEUR * RATIO_REDUCTEUR   # 663 théorique (RISING seul)
+# Polling Python 0.5 ms rate ~50 % des fronts à PWM 35 % (période ~0.89 ms).
+# PPR_EFFECTIF est la valeur MESURÉE terrain : 500 mm = 1550 pulses (moy. G/D).
+PPR_EFFECTIF     = 633
+DEGRES_PAR_PULSE = 360.0 / PPR_EFFECTIF            # 0.569 °/pulse
 
 # ── GPIO — offsets vérifiés sur ce Jetson avec Jetson.GPIO.gpio_pin_data ─────
 CHIP_NAME    = 'gpiochip0'   # tegra234-gpio (164 lignes)

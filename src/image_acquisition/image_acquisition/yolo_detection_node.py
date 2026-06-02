@@ -106,7 +106,7 @@ class YoloDetectionNode(Node):
 
         # ── Parameters ────────────────────────────────────────────────────────
         self.declare_parameter('model_path',           '/home/afro-robotics/robot_ws/models/best.engine')
-        self.declare_parameter('confidence_threshold', 0.6)
+        self.declare_parameter('confidence_threshold', 0.45)
         self.declare_parameter('device',               'cuda')
         self.declare_parameter('img_size',             640)
 
@@ -144,18 +144,15 @@ class YoloDetectionNode(Node):
         self._frame_count = 0
         self._t0          = time.time()
 
+        # ── Bbox persistence : keep last boxes visible for N frames ───────────
+        self._ghost_boxes = []   # list of (ix1,iy1,ix2,iy2, label, color)
+        self._ghost_age   = 0
+        self._GHOST_MAX   = 12   # ~0.6 s at 20 fps
+
         # ── MJPEG stream server on port 8080 ──────────────────────────────────
         server = HTTPServer(('0.0.0.0', 8080), _MJPEGHandler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
-        import socket as _socket
-        try:
-            _s = _socket.socket(_socket.AF_INET, _socket.SOCK_DGRAM)
-            _s.connect(('8.8.8.8', 80))
-            _local_ip = _s.getsockname()[0]
-            _s.close()
-        except Exception:
-            _local_ip = '0.0.0.0'
-        self.get_logger().info(f"MJPEG stream: http://{_local_ip}:8080")
+        self.get_logger().info("MJPEG stream: http://10.12.44.113:8080")
 
         self.get_logger().info("YoloDetectionNode ready — waiting for frames on /camera/image_raw")
 
@@ -184,6 +181,7 @@ class YoloDetectionNode(Node):
         best_score = -1.0
 
         annotated_frame = frame.copy()
+        current_boxes   = []   # (ix1,iy1,ix2,iy2, label, color) this frame
 
         for box in results.boxes:
             original_cls = int(box.cls[0])
@@ -209,27 +207,40 @@ class YoloDetectionNode(Node):
             det.bbox.size_x = bw
             det.bbox.size_y = bh
 
-            # Class hypothesis
             hyp                     = ObjectHypothesisWithPose()
-            hyp.hypothesis.class_id = class_name    # e.g. "Plastic"
+            hyp.hypothesis.class_id = class_name
             hyp.hypothesis.score    = conf_score
             det.results.append(hyp)
 
             det_array.detections.append(det)
 
-            # Track best (highest confidence) detection
             if conf_score > best_score:
                 best_score = conf_score
                 best_det   = det
 
-            # ── Draw on annotated frame ───────────────────────────────────────
             ix1, iy1, ix2, iy2 = int(x1), int(y1), int(x2), int(y2)
             label = f"{class_name} {conf_score:.2f}"
+            current_boxes.append((ix1, iy1, ix2, iy2, label, color))
 
-            cv2.rectangle(annotated_frame, (ix1, iy1), (ix2, iy2), color, 2)
-            (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
+        # ── Bbox persistence ──────────────────────────────────────────────────
+        if current_boxes:
+            self._ghost_boxes = current_boxes
+            self._ghost_age   = 0
+        elif self._ghost_age < self._GHOST_MAX:
+            self._ghost_age  += 1
+        else:
+            self._ghost_boxes = []
+
+        draw_boxes = current_boxes if current_boxes else self._ghost_boxes
+        is_ghost   = not current_boxes and bool(draw_boxes)
+
+        for (ix1, iy1, ix2, iy2, label, color) in draw_boxes:
+            thickness = 1 if is_ghost else 2
+            ghost_lbl = f"[last] {label}" if is_ghost else label
+            cv2.rectangle(annotated_frame, (ix1, iy1), (ix2, iy2), color, thickness)
+            (tw, th), _ = cv2.getTextSize(ghost_lbl, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
             cv2.rectangle(annotated_frame, (ix1, iy1 - th - 8), (ix1 + tw + 4, iy1), color, -1)
-            cv2.putText(annotated_frame, label, (ix1 + 2, iy1 - 4),
+            cv2.putText(annotated_frame, ghost_lbl, (ix1 + 2, iy1 - 4),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
 
         # ── Publish detections ────────────────────────────────────────────────
