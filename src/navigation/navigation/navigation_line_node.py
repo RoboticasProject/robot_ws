@@ -282,7 +282,7 @@ class NavigationLineNode(Node):
         self.get_logger().info(
             f"NavigationLineNode prêt\n"
             f"  Serpentine : {NUM_PASSES} couloirs × {ROOM_MM/1000:.0f} m\n"
-            f"  PUL_STRAIGHT={PUL_STRAIGHT}  PUL_TURN90={PUL_TURN90}  PUL_UTURN_STRAIGHT={PUL_UTURN_STRAIGHT}\n"
+            f"  PUL_STRAIGHT={PUL_STRAIGHT}  PUL_TURN90={PUL_TURN90}  UTURN_TIMEOUT={UTURN_TURN_TIMEOUT}s\n"
             f"  STEER_GAIN={STEER_GAIN}  SPEED_LINE={SPEED_FWD_LINE}%\n"
             f"  En attente /line_error + /wheel_encoders..."
         )
