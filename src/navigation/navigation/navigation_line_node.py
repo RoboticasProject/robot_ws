@@ -67,9 +67,15 @@ CORRIDOR_MM  = 400.0
 NUM_PASSES   = int(ROOM_MM / CORRIDOR_MM)            # 5
 
 PUL_STRAIGHT = int(ROOM_MM     / MM_PER_PULSE)       # ~6186 pul
-PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # ~731 pul  (90°)
+PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # 90° théorique
+
+# ── Angle de transition de couloir — À CALIBRER ───────────────────────────────
+# Le robot sur-pivote mécaniquement : réduire UTURN_ANGLE_DEG jusqu'à obtenir
+# exactement 90° physiques.  Même angle utilisé pour UTURN_1 et UTURN_2.
+UTURN_ANGLE_DEG    = 80.0   # ← ajuster ici si besoin (degrés réels voulus)
+PUL_UTURN          = int((UTURN_ANGLE_DEG * math.pi / 180.0) * (WHEELBASE_MM / 2.0) / MM_PER_PULSE)
+UTURN_TURN_TIMEOUT = 2.5   # s — fallback si encodeurs non disponibles
 PUL_UTURN_STRAIGHT = int(200.0 / MM_PER_PULSE)  # 20 cm minimum avant de réagir caméra
-UTURN_TURN_TIMEOUT = 2.5   # s — fallback pivot 90°
 UTURN_STR_TIMEOUT  = 8.0   # s — fallback si la 2e ligne transversale n'est pas vue
 UTURN2_MIN_TIME    = 0.4   # s — garde min avant que LINE_OK stoppe UTURN_2
 
@@ -506,8 +512,8 @@ class NavigationLineNode(Node):
             if self._uturn_start_t is None:
                 self._uturn_start_t = now
             t_uturn = (now - self._uturn_start_t).nanoseconds / 1e9
-            if mini >= PUL_TURN90 or t_uturn >= UTURN_TURN_TIMEOUT:
-                how = f"{mini}pul" if mini >= PUL_TURN90 else f"{t_uturn:.1f}s timeout"
+            if mini >= PUL_UTURN or t_uturn >= UTURN_TURN_TIMEOUT:
+                how = f"{mini}pul/{UTURN_ANGLE_DEG:.0f}°" if mini >= PUL_UTURN else f"{t_uturn:.1f}s timeout"
                 self._stop()
                 self._uturn_start_t = now
                 self._reset_sm()
@@ -547,8 +553,8 @@ class NavigationLineNode(Node):
             settled     = t_uturn >= UTURN2_MIN_TIME
             cam_trigger = settled and (ls == _LINE_OK)
 
-            if cam_trigger or mini >= PUL_TURN90 or t_uturn >= UTURN_TURN_TIMEOUT:
-                how = "caméra 2-bordures" if cam_trigger else f"{mini}pul/{t_uturn:.1f}s"
+            if cam_trigger or mini >= PUL_UTURN or t_uturn >= UTURN_TURN_TIMEOUT:
+                how = "caméra 2-bordures" if cam_trigger else f"{mini}pul/{UTURN_ANGLE_DEG:.0f}°/{t_uturn:.1f}s"
                 self._stop()
                 self._uturn_start_t  = None
                 self._turn_dir       = 'R' if self._turn_dir == 'L' else 'L'
