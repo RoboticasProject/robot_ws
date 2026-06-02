@@ -5,10 +5,11 @@ navigation_line_node.py — Suivi de ligne caméra + détection de déchets → 
 Machine à états
 ───────────────
 Suivi ligne  : LINE_FOLLOWING   (braquage fuzzy caméra, vitesse modulée YOLO)
-Transition   : UTURN_1 (90° encodeur)
-               → UTURN_STRAIGHT (≥20 cm, puis caméra voit 2e ligne transversale)
-               → UTURN_2 (pivot jusqu'à caméra voit les 2 bordures du couloir)
-               → LINE_FOLLOWING
+Transition   : UTURN — pivot continu guidé caméra
+               Le robot pivote jusqu'à ce que la caméra voie les deux
+               bordures du couloir suivant (LINE_OK).  Pas d'angle ni de
+               distance fixés : c'est la caméra qui décide l'arrêt.
+               Fallback timeout si LINE_OK n'est pas trouvé.
 Ramassage    : STOPPED_TRASH → TURN_TO_BIN → GO_TO_BIN → AT_BIN
                → TURN_TO_LINE → GO_TO_LINE → REORIENT → REACQUIRE
                                                               ↓
@@ -66,18 +67,12 @@ ROOM_MM      = 2000.0
 CORRIDOR_MM  = 400.0
 NUM_PASSES   = int(ROOM_MM / CORRIDOR_MM)            # 5
 
-PUL_STRAIGHT = int(ROOM_MM     / MM_PER_PULSE)       # ~6186 pul
-PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # 90° théorique
+PUL_STRAIGHT = int(ROOM_MM / MM_PER_PULSE)           # ~6186 pul
+PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # 90° — utilisé pour bin-trip
 
-# ── Angle de transition de couloir — À CALIBRER ───────────────────────────────
-# Le robot sur-pivote mécaniquement : réduire UTURN_ANGLE_DEG jusqu'à obtenir
-# exactement 90° physiques.  Même angle utilisé pour UTURN_1 et UTURN_2.
-UTURN_ANGLE_DEG    = 80.0   # ← ajuster ici si besoin (degrés réels voulus)
-PUL_UTURN          = int((UTURN_ANGLE_DEG * math.pi / 180.0) * (WHEELBASE_MM / 2.0) / MM_PER_PULSE)
-UTURN_TURN_TIMEOUT = 2.5   # s — fallback si encodeurs non disponibles
-PUL_UTURN_STRAIGHT = int(200.0 / MM_PER_PULSE)  # 20 cm minimum avant de réagir caméra
-UTURN_STR_TIMEOUT  = 8.0   # s — fallback si la 2e ligne transversale n'est pas vue
-UTURN2_MIN_TIME    = 0.4   # s — garde min avant que LINE_OK stoppe UTURN_2
+# ── Transition de couloir — guidée caméra ─────────────────────────────────────
+UTURN_SETTLE_TIME  = 0.4   # s minimum de pivot avant d'accepter LINE_OK
+UTURN_TURN_TIMEOUT = 6.0   # s fallback si la caméra ne trouve pas le couloir
 
 # Temps minimum dans le couloir avant d'accepter "fin de couloir".
 # Remplace le check encodeur (MIN_PASS_PULSES) — robuste si encodeurs défaillants.
@@ -189,9 +184,9 @@ class NavigationLineNode(Node):
 
     # ── États ────────────────────────────────────────────────────────────────
     ST_LINE_FOLLOWING = 'LINE_FOLLOWING'
-    ST_UTURN_1        = 'UTURN_1'         # 1er pivot 90°
-    ST_UTURN_STRAIGHT = 'UTURN_STRAIGHT'  # avance 20 cm
-    ST_UTURN_2        = 'UTURN_2'         # 2e pivot 90°
+    ST_UTURN_1        = 'UTURN'           # pivot caméra-guidé jusqu'à LINE_OK
+    ST_UTURN_STRAIGHT = 'UTURN_STRAIGHT'  # (inutilisé — conservé pour compatibilité)
+    ST_UTURN_2        = 'UTURN_2'         # (inutilisé — conservé pour compatibilité)
     ST_STOPPED_TRASH  = 'STOPPED_TRASH'
     ST_TURN_TO_BIN    = 'TURN_TO_BIN'
     ST_GO_TO_BIN      = 'GO_TO_BIN'
@@ -206,7 +201,7 @@ class NavigationLineNode(Node):
     FOLLOW_STATES = {ST_LINE_FOLLOWING}
 
     # Sync Layer 3 actif pendant les droites ET les pivots encodeur
-    SYNC_STATES = {ST_GO_TO_BIN, ST_GO_TO_LINE, ST_UTURN_1, ST_UTURN_STRAIGHT, ST_UTURN_2}
+    SYNC_STATES = {ST_GO_TO_BIN, ST_GO_TO_LINE}
 
     # ─────────────────────────────────────────────────────────────────────────
 
@@ -502,71 +497,38 @@ class NavigationLineNode(Node):
                 return
 
         # ══════════════════════════════════════════════════════════════════════
-        #  TRANSITION DE COULOIR — caméra + encodeur
-        #  UTURN_1 : pivot 90° (encodeur)
-        #  UTURN_STRAIGHT : avance ≥20 cm, puis attend la 2e ligne transversale
-        #  UTURN_2 : pivot jusqu'à voir les deux bordures du couloir (LINE_OK)
+        #  TRANSITION DE COULOIR — pivot guidé caméra
+        #  Le robot pivote librement.  La caméra arrête le pivot dès qu'elle
+        #  voit les deux bordures du couloir suivant (LINE_OK).
+        #  Aucun angle ni distance fixés — vitesse + angle + durée décidés
+        #  par la détection visuelle en temps réel.
         # ══════════════════════════════════════════════════════════════════════
 
         elif self._state == self.ST_UTURN_1:
             if self._uturn_start_t is None:
                 self._uturn_start_t = now
-            t_uturn = (now - self._uturn_start_t).nanoseconds / 1e9
-            if mini >= PUL_UTURN or t_uturn >= UTURN_TURN_TIMEOUT:
-                how = f"{mini}pul/{UTURN_ANGLE_DEG:.0f}°" if mini >= PUL_UTURN else f"{t_uturn:.1f}s timeout"
-                self._stop()
-                self._uturn_start_t = now
-                self._reset_sm()
-                self._avancer(SPEED_FWD)
-                self._state = self.ST_UTURN_STRAIGHT
-                self.get_logger().info(f"UTURN_1 90° ({how}) → UTURN_STRAIGHT")
 
-        elif self._state == self.ST_UTURN_STRAIGHT:
-            if self._uturn_start_t is None:
-                self._uturn_start_t = now
-            t_str = (now - self._uturn_start_t).nanoseconds / 1e9
-
-            # Lire l'état ligne courant
+            t = (now - self._uturn_start_t).nanoseconds / 1e9
             ls = float(self._line_data[1]) if len(self._line_data) > 1 else _LINE_LOST
 
-            # Déclencheur caméra : 2e ligne transversale visible après le minimum
-            min_dist    = avg >= PUL_UTURN_STRAIGHT   # ≥20 cm parcourus
-            cam_trigger = min_dist and (ls == _LINE_TURN)
-
-            if cam_trigger or t_str >= UTURN_STR_TIMEOUT:
-                how = "caméra 2e-ligne" if cam_trigger else f"{t_str:.1f}s timeout"
-                self._stop()
-                self._uturn_start_t = now
-                self._reset_sm()
-                self._pivoter(self._turn_dir)
-                self._state = self.ST_UTURN_2
-                self.get_logger().info(f"UTURN_STRAIGHT ({how}) → UTURN_2")
-
-        elif self._state == self.ST_UTURN_2:
-            if self._uturn_start_t is None:
-                self._uturn_start_t = now
-            t_uturn = (now - self._uturn_start_t).nanoseconds / 1e9
-
-            ls = float(self._line_data[1]) if len(self._line_data) > 1 else _LINE_LOST
-
-            # Garde : attendre UTURN2_MIN_TIME avant d'accepter LINE_OK
-            settled     = t_uturn >= UTURN2_MIN_TIME
+            # Garde minimale pour éviter un faux positif immédiat
+            settled     = t >= UTURN_SETTLE_TIME
             cam_trigger = settled and (ls == _LINE_OK)
 
-            if cam_trigger or mini >= PUL_UTURN or t_uturn >= UTURN_TURN_TIMEOUT:
-                how = "caméra 2-bordures" if cam_trigger else f"{mini}pul/{UTURN_ANGLE_DEG:.0f}°/{t_uturn:.1f}s"
+            if cam_trigger or t >= UTURN_TURN_TIMEOUT:
+                how = "caméra LINE_OK" if cam_trigger else f"{t:.1f}s timeout"
                 self._stop()
                 self._uturn_start_t  = None
                 self._turn_dir       = 'R' if self._turn_dir == 'L' else 'L'
                 self._reset_sm()
                 self._line_lost_t    = None
-                # Si caméra a trouvé les bordures, utiliser l'erreur courante
                 self._last_error     = float(self._line_data[0]) if cam_trigger else 0.0
                 self._cruise_speed   = SPEED_FWD_LINE
                 self._follow_start_t = now
                 self._state          = self.ST_LINE_FOLLOWING
                 self.get_logger().info(
-                    f"UTURN_2 ({how}) → LINE_FOLLOWING  couloir {self._pass_num}/{NUM_PASSES}"
+                    f"UTURN ({how}, {t:.2f}s) → LINE_FOLLOWING"
+                    f"  couloir {self._pass_num}/{NUM_PASSES}"
                     f"  θ={math.degrees(self._θ):.0f}°"
                 )
 
@@ -689,7 +651,7 @@ class NavigationLineNode(Node):
     # ─────────────────────────────────────────────────────────────────────────
 
     def _trigger_u_turn(self, now):
-        """Incrémente le compteur de couloirs et démarre le virage en U (90°+20cm+90°)."""
+        """Incrémente le compteur de couloirs et démarre le pivot caméra-guidé."""
         self._pass_num += 1
         if self._pass_num >= NUM_PASSES:
             self._stop()
@@ -705,7 +667,7 @@ class NavigationLineNode(Node):
         self._pivoter(self._turn_dir)
         self._state = self.ST_UTURN_1
         self.get_logger().info(
-            f"Couloir {self._pass_num - 1} terminé → UTURN_1 90° ({self._turn_dir})"
+            f"Couloir {self._pass_num - 1} terminé → UTURN caméra ({self._turn_dir})"
         )
 
     # ─────────────────────────────────────────────────────────────────────────
