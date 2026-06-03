@@ -28,6 +28,7 @@ pas aux GPIO — encoder_node est l'unique propriétaire des lignes libgpiod.
 """
 
 import math
+import signal
 import time
 
 import rclpy
@@ -678,13 +679,23 @@ class NavigationNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = NavigationNode()
+
+    def _handle_sigterm(signum, frame):
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+
+    signal.signal(signal.SIGTERM, _handle_sigterm)
+
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
     finally:
-        node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':

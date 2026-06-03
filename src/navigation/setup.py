@@ -13,6 +13,7 @@ setup(
         ('share/' + package_name + '/launch', [
             'launch/robot.launch.py',
             'launch/robot_line.launch.py',
+            'launch/test_lines.launch.py',
         ]),
     ],
     install_requires=['setuptools'],
@@ -32,6 +33,7 @@ setup(
             'navigation_node       = navigation.navigation_node:main',
             'line_follower_node    = navigation.line_follower_node:main',
             'navigation_line_node  = navigation.navigation_line_node:main',
+            'test_follow_lines     = navigation.test_follow_lines:main',
         ],
     },
 )

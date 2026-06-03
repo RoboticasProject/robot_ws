@@ -73,10 +73,14 @@ PUL_TURN90   = int((math.pi * WHEELBASE_MM / 4) / MM_PER_PULSE)  # 90° — util
 # UTURN_1  : pivot jusqu'à LINE_OK (caméra) — 1er virage
 # UTURN_STRAIGHT : droit 10 cm (encodeur)   — entre les deux virages
 # UTURN_2  : pivot jusqu'à LINE_OK (caméra) — 2e virage
-UTURN_SETTLE_TIME  = 0.4                         # s garde min avant d'accepter LINE_OK
-UTURN_TURN_TIMEOUT = 6.0                         # s fallback pivot si pas de LINE_OK
-PUL_UTURN_STRAIGHT = int(100.0 / MM_PER_PULSE)  # 10 cm entre les deux virages
-UTURN_STR_TIMEOUT  = 3.0                         # s fallback segment droit 10 cm
+UTURN_TURN_TIMEOUT = 6.0   # s fallback si encodeur défaillant
+UTURN_STR_TIMEOUT  = 3.0   # s fallback segment droit 10 cm
+
+# Calibrated encoder turns (from test_sequence files)
+PUL_LANE_TURN_L = 1200   # D wheel drives → 90° left turn
+PUL_LANE_TURN_R = 1100   # G wheel drives → 90° right turn
+PUL_LANE_STR_G  = 340    # left wheel  → 10 cm
+PUL_LANE_STR_D  = 289    # right wheel → 10 cm
 
 # Temps minimum dans le couloir avant d'accepter "fin de couloir".
 # Remplace le check encodeur (MIN_PASS_PULSES) — robuste si encodeurs défaillants.
@@ -187,6 +191,7 @@ def _find_i2c(addr=PCA9685_ADDR):
 class NavigationLineNode(Node):
 
     # ── États ────────────────────────────────────────────────────────────────
+    ST_WAITING_LINES  = 'WAITING_LINES'
     ST_LINE_FOLLOWING = 'LINE_FOLLOWING'
     ST_UTURN_1        = 'UTURN'           # pivot caméra-guidé jusqu'à LINE_OK
     ST_UTURN_STRAIGHT = 'UTURN_STRAIGHT'  # (inutilisé — conservé pour compatibilité)
@@ -246,7 +251,7 @@ class NavigationLineNode(Node):
         self._last_error  = 0.0    # dernière erreur connue
 
         # ── Serpentine ────────────────────────────────────────────────────────
-        self._state          = self.ST_LINE_FOLLOWING
+        self._state          = self.ST_WAITING_LINES
         self._pass_num       = 0
         self._turn_dir       = 'L'
         self._t_start        = None
@@ -434,13 +439,10 @@ class NavigationLineNode(Node):
 
         # ── Démarrage initial ─────────────────────────────────────────────────
         if self._t_start is None:
+            self._t_start = now
             self.get_logger().info(
-                "Caméra + encodeurs prêts — démarrage suivi de ligne !"
+                "Caméra + encodeurs prêts — en attente des deux lignes parallèles…"
             )
-            self._t_start        = now
-            self._follow_start_t = now
-            self._reset_sm()
-            self._state = self.ST_LINE_FOLLOWING
 
         if self._state == self.ST_DONE:
             return
@@ -452,6 +454,32 @@ class NavigationLineNode(Node):
         pd   = pd_raw if right_ok else pg_raw
         avg  = (pg + pd) // 2
         mini = min(pg, pd)
+
+        # ══════════════════════════════════════════════════════════════════════
+        #  ATTENTE DEUX LIGNES PARALLÈLES
+        # ══════════════════════════════════════════════════════════════════════
+
+        if self._state == self.ST_WAITING_LINES:
+            left_cx  = float(self._line_data[2]) if len(self._line_data) > 2 else -1.0
+            right_cx = float(self._line_data[3]) if len(self._line_data) > 3 else -1.0
+            line_state = float(self._line_data[1]) if len(self._line_data) > 1 else _LINE_LOST
+            both = (line_state == _LINE_OK         and   # camera actually sees a line
+                    left_cx  >= 0                  and
+                    right_cx >= 0                  and
+                    left_cx  < 320 * 0.75          and   # left line on left side  (< 240px)
+                    right_cx > 320 * 1.25          and   # right line on right side (> 400px)
+                    right_cx - left_cx > 150)             # minimum corridor width
+            if both:
+                self._reset_sm()
+                self._follow_start_t = now
+                self._line_lost_t    = None
+                self._last_error     = float(self._line_data[0])
+                self._state          = self.ST_LINE_FOLLOWING
+                self.get_logger().info(
+                    f"✓ Both lines detected — left={left_cx:.0f}px  right={right_cx:.0f}px"
+                    f"  corridor={right_cx - left_cx:.0f}px → LINE_FOLLOWING"
+                )
+            return
 
         # ══════════════════════════════════════════════════════════════════════
         #  SUIVI DE LIGNE (braquage fuzzy caméra)
@@ -511,11 +539,10 @@ class NavigationLineNode(Node):
             if self._uturn_start_t is None:
                 self._uturn_start_t = now
             t = (now - self._uturn_start_t).nanoseconds / 1e9
-            ls = float(self._line_data[1]) if len(self._line_data) > 1 else _LINE_LOST
-            settled     = t >= UTURN_SETTLE_TIME
-            cam_trigger = settled and (ls == _LINE_OK)
-            if cam_trigger or t >= UTURN_TURN_TIMEOUT:
-                how = "caméra" if cam_trigger else f"{t:.1f}s timeout"
+            enc_done = (self._seg_r() >= PUL_LANE_TURN_L if self._turn_dir == 'L'
+                        else self._seg_l() >= PUL_LANE_TURN_R)
+            if enc_done or t >= UTURN_TURN_TIMEOUT:
+                how = "encodeur" if enc_done else f"{t:.1f}s timeout"
                 self._stop()
                 self._uturn_start_t = now
                 self._reset_sm()
@@ -527,12 +554,18 @@ class NavigationLineNode(Node):
             if self._uturn_start_t is None:
                 self._uturn_start_t = now
             t_str = (now - self._uturn_start_t).nanoseconds / 1e9
-            if avg >= PUL_UTURN_STRAIGHT or t_str >= UTURN_STR_TIMEOUT:
-                how = f"{avg}pul" if avg >= PUL_UTURN_STRAIGHT else f"{t_str:.1f}s timeout"
+            str_done = self._seg_l() >= PUL_LANE_STR_G and self._seg_r() >= PUL_LANE_STR_D
+            if str_done or t_str >= UTURN_STR_TIMEOUT:
+                how = "encodeur" if str_done else f"{t_str:.1f}s timeout"
                 self._stop()
                 self._uturn_start_t = now
                 self._reset_sm()
-                self._pivoter(self._turn_dir)
+                if self._turn_dir == 'L':
+                    self._moteur('G', 0)
+                    self._moteur('D', SPEED_TURN)
+                else:
+                    self._moteur('G', SPEED_TURN)
+                    self._moteur('D', 0)
                 self._state = self.ST_UTURN_2
                 self.get_logger().info(f"UTURN_STRAIGHT 10cm ({how}) → UTURN_2")
 
@@ -540,17 +573,16 @@ class NavigationLineNode(Node):
             if self._uturn_start_t is None:
                 self._uturn_start_t = now
             t = (now - self._uturn_start_t).nanoseconds / 1e9
-            ls = float(self._line_data[1]) if len(self._line_data) > 1 else _LINE_LOST
-            settled     = t >= UTURN_SETTLE_TIME
-            cam_trigger = settled and (ls == _LINE_OK)
-            if cam_trigger or t >= UTURN_TURN_TIMEOUT:
-                how = "caméra" if cam_trigger else f"{t:.1f}s timeout"
+            enc_done = (self._seg_r() >= PUL_LANE_TURN_L if self._turn_dir == 'L'
+                        else self._seg_l() >= PUL_LANE_TURN_R)
+            if enc_done or t >= UTURN_TURN_TIMEOUT:
+                how = "encodeur" if enc_done else f"{t:.1f}s timeout"
                 self._stop()
                 self._uturn_start_t  = None
                 self._turn_dir       = 'R' if self._turn_dir == 'L' else 'L'
                 self._reset_sm()
                 self._line_lost_t    = None
-                self._last_error     = float(self._line_data[0]) if cam_trigger else 0.0
+                self._last_error     = 0.0
                 self._cruise_speed   = SPEED_FWD_LINE
                 self._follow_start_t = now
                 self._state          = self.ST_LINE_FOLLOWING
@@ -692,10 +724,15 @@ class NavigationLineNode(Node):
         self._stop()
         self._reset_sm()
         self._uturn_start_t = None
-        self._pivoter(self._turn_dir)
+        if self._turn_dir == 'L':
+            self._moteur('G', 0)
+            self._moteur('D', SPEED_TURN)
+        else:
+            self._moteur('G', SPEED_TURN)
+            self._moteur('D', 0)
         self._state = self.ST_UTURN_1
         self.get_logger().info(
-            f"Couloir {self._pass_num - 1} terminé → UTURN caméra ({self._turn_dir})"
+            f"Couloir {self._pass_num - 1} terminé → UTURN encodeur ({self._turn_dir})"
         )
 
     # ─────────────────────────────────────────────────────────────────────────

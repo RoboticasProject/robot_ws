@@ -251,7 +251,10 @@ class LineFollowerNode(Node):
 
         # ── Publication /line_error  [error, state, left_cx, right_cx, corridor_w] ──
         msg_out      = Float32MultiArray()
-        msg_out.data = [error, line_state, left_cx, right_cx, corridor_w]
+        msg_out.data = [error, line_state,
+                        left_cx  if left_found  else -1.0,
+                        right_cx if right_found else -1.0,
+                        corridor_w]
         self._pub_err.publish(msg_out)
 
         # ── Publication image annotée ─────────────────────────────────────────

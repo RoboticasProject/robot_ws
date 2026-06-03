@@ -33,7 +33,7 @@ WHEEL_CIRC    = math.pi * WHEEL_DIAM_MM
 MM_PER_PULSE  = WHEEL_CIRC / PPR_EFFECTIF
 SPEED_FWD     = 35
 SPEED_TRIM_D  = 0.842
-DURATION_SECS = 20.0
+DURATION_SECS = 10.0
 
 # ── Fuzzy sync — identiques à navigation_node.py ─────────────────────────────
 SYNC_ZERO_THRESH  = 1             # 1 pulse/50ms noise floor  (was 2/100ms)
